@@ -1,0 +1,54 @@
+package com.app.model;
+
+public class HoaDon {
+    private int id;
+    private int banAnId;
+    private int nhanVienId;
+    private Integer khachHangId; // Dùng Integer thay vì int vì trường này có thể NULL (Khách vãng lai)
+    private String ngayTao;      // YYYY-MM-DD HH:MM:SS
+    private double tongTien;
+    private double vat;          // Mặc định 0.1
+    private double giamGia;
+    private int trangThai;       // 0: Chưa thanh toán, 1: Đã thanh toán
+
+    public HoaDon() {}
+
+    public HoaDon(int id, int banAnId, int nhanVienId, Integer khachHangId, String ngayTao, double tongTien, double vat, double giamGia, int trangThai) {
+        this.id = id;
+        this.banAnId = banAnId;
+        this.nhanVienId = nhanVienId;
+        this.khachHangId = khachHangId;
+        this.ngayTao = ngayTao;
+        this.tongTien = tongTien;
+        this.vat = vat;
+        this.giamGia = giamGia;
+        this.trangThai = trangThai;
+    }
+
+    public int getId() { return id; }
+    public void setId(int id) { this.id = id; }
+
+    public int getBanAnId() { return banAnId; }
+    public void setBanAnId(int banAnId) { this.banAnId = banAnId; }
+
+    public int getNhanVienId() { return nhanVienId; }
+    public void setNhanVienId(int nhanVienId) { this.nhanVienId = nhanVienId; }
+
+    public Integer getKhachHangId() { return khachHangId; }
+    public void setKhachHangId(Integer khachHangId) { this.khachHangId = khachHangId; }
+
+    public String getNgayTao() { return ngayTao; }
+    public void setNgayTao(String ngayTao) { this.ngayTao = ngayTao; }
+
+    public double getTongTien() { return tongTien; }
+    public void setTongTien(double tongTien) { this.tongTien = tongTien; }
+
+    public double getVat() { return vat; }
+    public void setVat(double vat) { this.vat = vat; }
+
+    public double getGiamGia() { return giamGia; }
+    public void setGiamGia(double giamGia) { this.giamGia = giamGia; }
+
+    public int getTrangThai() { return trangThai; }
+    public void setTrangThai(int trangThai) { this.trangThai = trangThai; }
+}
