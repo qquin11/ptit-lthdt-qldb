@@ -33,7 +33,7 @@ public class LoginFrame extends JFrame {
     private final JTextField fieldUsername = new JTextField(20);
     private final JPasswordField fieldPassword = new JPasswordField(20);
     private final JCheckBox cbRemember = new JCheckBox("Ghi nhớ tôi");
-    private final GhostButton btnEye = new GhostButton("👁");
+    private final GhostButton btnEye = new GhostButton("◉");
     private final PrimaryButton btnLogin = new PrimaryButton("ĐĂNG NHẬP");
     private final JLabel lblError = new JLabel(" ");
     private boolean passwordVisible = false;
@@ -64,8 +64,9 @@ public class LoginFrame extends JFrame {
         header.setOpaque(false);
         header.setBorder(BorderFactory.createEmptyBorder(AppSpacing.XXL, 0, AppSpacing.MD, 0));
 
-        JLabel logo = new JLabel("🍽", SwingConstants.CENTER);
-        logo.setFont(new java.awt.Font("Segoe UI Emoji", java.awt.Font.PLAIN, 48));
+        JLabel logo = new JLabel("✦", SwingConstants.CENTER);
+        logo.setFont(logo.getFont().deriveFont(java.awt.Font.BOLD, 64f));
+        logo.setForeground(AppColors.LIGHT_ACCENT);
 
         JLabel brand = new JLabel(AppConfig.APP_NAME, SwingConstants.CENTER);
         brand.setFont(AppFonts.display == null ? brand.getFont() : AppFonts.display);
@@ -159,7 +160,7 @@ public class LoginFrame extends JFrame {
     private void togglePassword() {
         passwordVisible = !passwordVisible;
         fieldPassword.setEchoChar(passwordVisible ? (char) 0 : '•');
-        btnEye.setText(passwordVisible ? "🙈" : "👁");
+        btnEye.setText(passwordVisible ? "○" : "◉");
     }
 
     // ===================== PUBLIC API CHO CONTROLLER =====================

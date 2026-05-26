@@ -50,8 +50,9 @@ public class Sidebar extends JPanel {
         header.setOpaque(false);
         header.setBorder(BorderFactory.createEmptyBorder(
                 AppSpacing.LG, AppSpacing.LG, AppSpacing.LG, AppSpacing.LG));
-        JLabel logoIcon = new JLabel("🍽");
+        JLabel logoIcon = new JLabel("✦");
         logoIcon.setFont(AppFonts.iconLarge == null ? logoIcon.getFont() : AppFonts.iconLarge);
+        logoIcon.setForeground(com.app.config.AppColors.LIGHT_ACCENT);
         JLabel logoText = new JLabel(AppConfig.APP_NAME);
         logoText.setFont(AppFonts.h2 == null ? logoText.getFont() : AppFonts.h2);
         header.add(logoIcon);
@@ -63,17 +64,17 @@ public class Sidebar extends JPanel {
         body.setLayout(new BoxLayout(body, BoxLayout.Y_AXIS));
         body.setOpaque(false);
 
-        addItem(body, ID_DASHBOARD,   "🏠", "Trang chủ");
-        addItem(body, ID_TABLES,      "🗺", "Sơ đồ bàn");
-        addItem(body, ID_RESERVATION, "🛎", "Đặt bàn");
-        addItem(body, ID_MENU,        "🍱", "Menu");
-        addItem(body, ID_EMPLOYEES,   "👥", "Nhân viên");
-        addItem(body, ID_PAYMENT,     "💳", "Thanh toán");
+        addItem(body, ID_DASHBOARD,   "⌂", "Trang chủ");
+        addItem(body, ID_TABLES,      "▦", "Sơ đồ bàn");
+        addItem(body, ID_RESERVATION, "☎", "Đặt bàn");
+        addItem(body, ID_MENU,        "▥", "Menu");
+        addItem(body, ID_EMPLOYEES,   "☻", "Nhân viên");
+        addItem(body, ID_PAYMENT,     "⊞", "Thanh toán");
 
         body.add(Box.createVerticalGlue());
         body.add(new JSeparator(SwingConstants.HORIZONTAL));
         addItem(body, ID_SETTINGS, "⚙", "Cài đặt");
-        addItem(body, ID_LOGOUT,   "🚪", "Đăng xuất");
+        addItem(body, ID_LOGOUT,   "⇲", "Đăng xuất");
 
         add(body, BorderLayout.CENTER);
     }

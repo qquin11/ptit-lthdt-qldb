@@ -22,9 +22,9 @@ import java.time.format.DateTimeFormatter;
 /** Dashboard với 3 KPI cards + activity feed (Phase 07). */
 public class DashboardPanel extends JPanel {
 
-    private final StatCard cardRevenue = new StatCard("💰", "Doanh thu hôm nay");
-    private final StatCard cardTables  = new StatCard("🪑", "Bàn đang dùng");
-    private final StatCard cardOrders  = new StatCard("📋", "Hóa đơn hôm nay");
+    private final StatCard cardRevenue = new StatCard("₫", "Doanh thu hôm nay");
+    private final StatCard cardTables  = new StatCard("▦", "Bàn đang dùng");
+    private final StatCard cardOrders  = new StatCard("▤", "Hóa đơn hôm nay");
     private final RevenueChart chart = new RevenueChart();
     private final ActivityFeed feed = new ActivityFeed();
     private final JLabel lblDateTime;

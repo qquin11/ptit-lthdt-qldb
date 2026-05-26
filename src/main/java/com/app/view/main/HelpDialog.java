@@ -46,7 +46,7 @@ public class HelpDialog extends JDialog {
         setLocationRelativeTo(owner);
         setLayout(new BorderLayout());
 
-        JLabel title = new JLabel("⌨ Phím tắt");
+        JLabel title = new JLabel("Phím tắt");
         title.setFont(AppFonts.h1 == null ? title.getFont() : AppFonts.h1);
         title.setBorder(BorderFactory.createEmptyBorder(
                 AppSpacing.LG, AppSpacing.LG, AppSpacing.SM, AppSpacing.LG));

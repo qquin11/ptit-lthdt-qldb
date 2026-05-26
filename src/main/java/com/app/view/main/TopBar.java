@@ -72,12 +72,12 @@ public class TopBar extends JPanel {
             btnTheme.setText(themeIcon());
         });
 
-        btnBell = new GhostButton("🔔");
+        btnBell = new GhostButton("✉");
         btnBell.setFont(com.app.config.AppFonts.icon == null ? btnBell.getFont() : com.app.config.AppFonts.icon);
         btnBell.setToolTipText("Thông báo");
         btnBell.addActionListener(e -> showNotifications());
 
-        btnUser = new GhostButton("👤  " + Session.currentName());
+        btnUser = new GhostButton("☻  " + Session.currentName());
         btnUser.setFont(com.app.config.AppFonts.icon == null ? btnUser.getFont() : com.app.config.AppFonts.icon);
         btnUser.setToolTipText("Tài khoản");
         btnUser.addActionListener(e -> showUserMenu());
@@ -94,7 +94,7 @@ public class TopBar extends JPanel {
     }
 
     public void refreshUser() {
-        btnUser.setText("👤 " + Session.currentName());
+        btnUser.setText("☻  " + Session.currentName());
     }
 
     public void onSearch(Consumer<String> listener) {
@@ -119,7 +119,7 @@ public class TopBar extends JPanel {
     }
 
     private String themeIcon() {
-        return ThemeManager.current() == ThemeManager.Theme.DARK ? "☀" : "🌙";
+        return ThemeManager.current() == ThemeManager.Theme.DARK ? "☀" : "☾";
     }
 
     /** Refresh badge số đặt bàn chờ + bàn dùng từ DB */
@@ -129,11 +129,11 @@ public class TopBar extends JPanel {
                     .filter(d -> "CHO_DEN".equals(d.getTrangThai())).count();
             int activeOrders = new com.app.dao.HoaDonDAO().findAllOpen().size();
             int total = waitingBooking + activeOrders;
-            btnBell.setText(total > 0 ? "🔔  " + total : "🔔");
+            btnBell.setText(total > 0 ? "✉  " + total : "✉");
             btnBell.setToolTipText(String.format("%d đặt bàn chờ · %d order đang mở",
                     waitingBooking, activeOrders));
         } catch (Exception ignored) {
-            btnBell.setText("🔔");
+            btnBell.setText("✉");
         }
     }
 

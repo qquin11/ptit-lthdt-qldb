@@ -120,11 +120,11 @@ public class TableCard extends JPanel {
         if (startedAt != null) {
             long mins = Duration.between(startedAt, LocalDateTime.now()).toMinutes();
             String text = mins < 60 ? mins + " phút" : (mins / 60) + "h" + (mins % 60) + "m";
-            lblTimer.setText("⏱  " + text);
+            lblTimer.setText("⌚ " + text);
         }
         if (openOrder.getTongTien() > 0) {
             double withVat = openOrder.getTongTien() * (1 + openOrder.getVat());
-            lblMoney.setText("💰  " + CurrencyFormatter.format(withVat));
+            lblMoney.setText("₫ " + CurrencyFormatter.format(withVat));
         } else {
             lblMoney.setText(" ");
         }

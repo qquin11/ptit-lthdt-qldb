@@ -148,7 +148,7 @@ public class OrderPanel extends JPanel {
         btnMinus.addActionListener(e -> changeQtySelected(-1));
         GhostButton btnPlus  = new GhostButton("+  SL");
         btnPlus.addActionListener(e -> changeQtySelected(+1));
-        SecondaryButton btnRemove  = new SecondaryButton("🗑  Xóa món chọn");
+        SecondaryButton btnRemove  = new SecondaryButton("✕  Xóa món chọn");
         btnRemove.addActionListener(e -> removeSelected(orderTable.getSelectedRow()));
         qtyRow.add(btnMinus);
         qtyRow.add(btnPlus);
@@ -157,7 +157,7 @@ public class OrderPanel extends JPanel {
         JPanel buttons = new JPanel(new BorderLayout(0, AppSpacing.XS));
         buttons.setOpaque(false);
         buttons.add(qtyRow, BorderLayout.NORTH);
-        PrimaryButton btnPay = new PrimaryButton("💳  THANH TOÁN");
+        PrimaryButton btnPay = new PrimaryButton("THANH TOÁN  (F9)");
         btnPay.addActionListener(e -> proceedPayment());
         buttons.add(btnPay, BorderLayout.CENTER);
         footer.add(buttons, BorderLayout.SOUTH);

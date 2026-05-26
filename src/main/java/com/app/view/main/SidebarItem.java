@@ -12,21 +12,18 @@ import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Graphics;
-import java.awt.Graphics2D;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.function.Consumer;
 
-/**
- * 1 mục trong sidebar — icon (emoji/text) + label.
- * 3 states: normal / hover / active. Active có accent bar bên trái.
- */
+/** 1 mục sidebar — icon + label, 3 states (normal/hover/active). */
 public class SidebarItem extends JPanel {
 
     private final String id;
     private final JLabel iconLabel;
     private final JLabel textLabel;
     private boolean active = false;
+    private boolean hover = false;
     private boolean collapsed = false;
 
     public SidebarItem(String id, String icon, String text, Consumer<String> onClick) {
@@ -37,7 +34,8 @@ public class SidebarItem extends JPanel {
         setPreferredSize(new Dimension(AppSpacing.W_SIDEBAR_EXPANDED, AppSpacing.H_SIDEBAR_ITEM));
         setMaximumSize(new Dimension(Integer.MAX_VALUE, AppSpacing.H_SIDEBAR_ITEM));
         setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-        setOpaque(true);
+        // Opaque=false để tự vẽ bg trong paintComponent — tránh alpha tích lũy gây overlap chữ
+        setOpaque(false);
 
         iconLabel = new JLabel(icon);
         iconLabel.setFont(AppFonts.icon == null ? iconLabel.getFont() : AppFonts.icon);
@@ -47,12 +45,12 @@ public class SidebarItem extends JPanel {
 
         add(iconLabel, BorderLayout.WEST);
         add(textLabel, BorderLayout.CENTER);
-        updateStyle();
+        updateColors();
 
         addMouseListener(new MouseAdapter() {
             @Override public void mouseClicked(MouseEvent e) { onClick.accept(id); }
-            @Override public void mouseEntered(MouseEvent e) { if (!active) hoverStyle(true); }
-            @Override public void mouseExited (MouseEvent e) { if (!active) hoverStyle(false); }
+            @Override public void mouseEntered(MouseEvent e) { hover = true;  repaint(); }
+            @Override public void mouseExited (MouseEvent e) { hover = false; repaint(); }
         });
     }
 
@@ -60,7 +58,8 @@ public class SidebarItem extends JPanel {
 
     public void setActive(boolean active) {
         this.active = active;
-        updateStyle();
+        updateColors();
+        repaint();
     }
 
     public void setCollapsed(boolean collapsed) {
@@ -69,40 +68,27 @@ public class SidebarItem extends JPanel {
         setPreferredSize(new Dimension(
                 collapsed ? AppSpacing.W_SIDEBAR_COLLAPSED : AppSpacing.W_SIDEBAR_EXPANDED,
                 AppSpacing.H_SIDEBAR_ITEM));
-        if (collapsed) {
-            setToolTipText(textLabel.getText());
-        } else {
-            setToolTipText(null);
-        }
+        setToolTipText(collapsed ? textLabel.getText() : null);
     }
 
     @Override
     protected void paintComponent(Graphics g) {
+        // Tự vẽ bg để tránh artefact khi dùng alpha trên opaque panel
+        if (active) {
+            g.setColor(new Color(37, 99, 235, 28));
+            g.fillRect(0, 0, getWidth(), getHeight());
+            g.setColor(AppColors.LIGHT_ACCENT);
+            g.fillRect(0, 0, 3, getHeight());
+        } else if (hover) {
+            g.setColor(new Color(0, 0, 0, 20));
+            g.fillRect(0, 0, getWidth(), getHeight());
+        }
         super.paintComponent(g);
-        if (active) {
-            // Accent bar 3px bên trái
-            Graphics2D g2 = (Graphics2D) g.create();
-            g2.setColor(AppColors.LIGHT_ACCENT);
-            g2.fillRect(0, 0, 3, getHeight());
-            g2.dispose();
-        }
     }
 
-    private void hoverStyle(boolean hover) {
-        setBackground(hover ? new Color(0, 0, 0, 18) : null);
-        repaint();
-    }
-
-    private void updateStyle() {
-        if (active) {
-            setBackground(new Color(37, 99, 235, 22)); // accent tint
-            textLabel.setForeground(AppColors.LIGHT_ACCENT);
-            iconLabel.setForeground(AppColors.LIGHT_ACCENT);
-        } else {
-            setBackground(null);
-            textLabel.setForeground(null);
-            iconLabel.setForeground(null);
-        }
-        repaint();
+    private void updateColors() {
+        Color fg = active ? AppColors.LIGHT_ACCENT : null;
+        textLabel.setForeground(fg);
+        iconLabel.setForeground(fg);
     }
 }

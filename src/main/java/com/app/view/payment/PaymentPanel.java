@@ -133,9 +133,9 @@ public class PaymentPanel extends JPanel {
         // Buttons
         JPanel buttons = new JPanel(new GridLayout(1, 2, AppSpacing.SM, 0));
         buttons.setOpaque(false);
-        SecondaryButton btnPreview = new SecondaryButton("👁 Xem hóa đơn");
+        SecondaryButton btnPreview = new SecondaryButton("◉  Xem hóa đơn");
         btnPreview.addActionListener(e -> showInvoicePreview());
-        PrimaryButton btnConfirm   = new PrimaryButton("✓ XÁC NHẬN THANH TOÁN");
+        PrimaryButton btnConfirm   = new PrimaryButton("✓  XÁC NHẬN THANH TOÁN");
         btnConfirm.addActionListener(e -> confirmPayment());
         buttons.add(btnPreview);
         buttons.add(btnConfirm);
