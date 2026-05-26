@@ -4,6 +4,9 @@ import com.app.config.AppColors;
 import com.app.config.AppFonts;
 import com.app.config.AppSpacing;
 import com.app.model.BanAn;
+import com.app.model.HoaDon;
+import com.app.util.CurrencyFormatter;
+import com.app.util.DateFormatter;
 
 import javax.swing.BorderFactory;
 import javax.swing.JLabel;
@@ -17,35 +20,47 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.function.Consumer;
 
 /** Card hiển thị 1 bàn — chuột trái mở Order, chuột phải mở menu (Đặt/Thanh toán). */
 public class TableCard extends JPanel {
 
     private final BanAn ban;
+    private final HoaDon openOrder;
     private final Color statusColor;
     private final Consumer<BanAn> onClickHandler;
     private final Consumer<BanAn> onReserveHandler;
     private final Consumer<BanAn> onPayHandler;
+    private final JLabel lblTimer = new JLabel(" ");
+    private final JLabel lblMoney = new JLabel(" ");
     private boolean hover = false;
 
     public TableCard(BanAn ban, Consumer<BanAn> onClick) {
-        this(ban, onClick, null, null);
+        this(ban, null, onClick, null, null);
     }
 
     public TableCard(BanAn ban, Consumer<BanAn> onClick,
                      Consumer<BanAn> onReserve, Consumer<BanAn> onPay) {
+        this(ban, null, onClick, onReserve, onPay);
+    }
+
+    public TableCard(BanAn ban, HoaDon openOrder, Consumer<BanAn> onClick,
+                     Consumer<BanAn> onReserve, Consumer<BanAn> onPay) {
         super(new BorderLayout(0, AppSpacing.XS));
         this.ban = ban;
+        this.openOrder = openOrder;
         this.statusColor = colorOf(ban.getTrangThai());
         this.onClickHandler = onClick;
         this.onReserveHandler = onReserve;
         this.onPayHandler = onPay;
 
-        setPreferredSize(new Dimension(160, 130));
+        setPreferredSize(new Dimension(160, 160));
         setBorder(BorderFactory.createCompoundBorder(
                 new LineBorder(statusColor, 2, true),
                 BorderFactory.createEmptyBorder(AppSpacing.MD, AppSpacing.MD, AppSpacing.MD, AppSpacing.MD)));
@@ -66,8 +81,19 @@ public class TableCard extends JPanel {
         center.add(lblDot);
         center.add(lblStatus);
 
+        // Footer: timer + money — chỉ hiển thị khi có order open
+        lblTimer.setFont(AppFonts.icon == null ? lblTimer.getFont() : AppFonts.icon.deriveFont(11f));
+        lblMoney.setFont(AppFonts.icon == null ? lblMoney.getFont() : AppFonts.icon.deriveFont(Font.BOLD, 11f));
+        lblMoney.setForeground(AppColors.LIGHT_ACCENT);
+        JPanel footer = new JPanel(new GridLayout(2, 1, 0, 2));
+        footer.setOpaque(false);
+        footer.add(lblTimer);
+        footer.add(lblMoney);
+
         add(lblName, BorderLayout.NORTH);
         add(center, BorderLayout.CENTER);
+        add(footer, BorderLayout.SOUTH);
+        updateOrderInfo();
 
         addMouseListener(new MouseAdapter() {
             @Override
@@ -81,6 +107,27 @@ public class TableCard extends JPanel {
             @Override public void mouseEntered(MouseEvent e) { hover = true;  repaint(); }
             @Override public void mouseExited (MouseEvent e) { hover = false; repaint(); }
         });
+    }
+
+    /** Update timer + money. Gọi định kỳ từ TableMapPanel timer. */
+    public void updateOrderInfo() {
+        if (openOrder == null) {
+            lblTimer.setText(" ");
+            lblMoney.setText(" ");
+            return;
+        }
+        var startedAt = DateFormatter.fromSql(openOrder.getNgayTao());
+        if (startedAt != null) {
+            long mins = Duration.between(startedAt, LocalDateTime.now()).toMinutes();
+            String text = mins < 60 ? mins + " phút" : (mins / 60) + "h" + (mins % 60) + "m";
+            lblTimer.setText("⏱  " + text);
+        }
+        if (openOrder.getTongTien() > 0) {
+            double withVat = openOrder.getTongTien() * (1 + openOrder.getVat());
+            lblMoney.setText("💰  " + CurrencyFormatter.format(withVat));
+        } else {
+            lblMoney.setText(" ");
+        }
     }
 
     private void showContextMenu(MouseEvent e) {

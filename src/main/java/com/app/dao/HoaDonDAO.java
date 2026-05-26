@@ -14,6 +14,19 @@ import java.util.List;
 
 public class HoaDonDAO extends BaseDAO {
 
+    /** Tất cả HĐ chưa thanh toán — load 1 lần cho TableMap render */
+    public List<HoaDon> findAllOpen() {
+        try (PreparedStatement ps = getConnection().prepareStatement(
+                "SELECT * FROM hoa_don WHERE trang_thai = 0");
+             ResultSet rs = ps.executeQuery()) {
+            List<HoaDon> list = new ArrayList<>();
+            while (rs.next()) list.add(map(rs));
+            return list;
+        } catch (Exception e) {
+            throw new DataAccessException("findAllOpen HoaDon", e);
+        }
+    }
+
     public HoaDon findById(int id) {
         try (PreparedStatement ps = getConnection().prepareStatement(
                 "SELECT * FROM hoa_don WHERE id = ?")) {

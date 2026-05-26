@@ -1,9 +1,10 @@
 package com.app.view.table;
 
-import com.app.config.AppColors;
 import com.app.config.AppFonts;
 import com.app.config.AppSpacing;
+import com.app.dao.HoaDonDAO;
 import com.app.model.BanAn;
+import com.app.model.HoaDon;
 import com.app.service.TableService;
 import com.app.util.SwingWorkerHelper;
 import com.app.view.common.SearchField;
@@ -13,18 +14,20 @@ import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.Timer;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.function.IntConsumer;
 
-/**
- * Sơ đồ bàn ⭐. Filter status + search + grid cards. Click bàn → mở Order.
- */
+/** Sơ đồ bàn — grid + filter + live timer 60s update tổng tiền/thời gian cho bàn đang dùng. */
 public class TableMapPanel extends JPanel {
 
     private final TableService tableService = new TableService();
+    private final HoaDonDAO hoaDonDAO = new HoaDonDAO();
     private final IntConsumer onTableClicked;
     private IntConsumer onReserveRequested;
     private IntConsumer onPayRequested;
@@ -36,20 +39,20 @@ public class TableMapPanel extends JPanel {
     private final JLabel legend = new JLabel(" ");
 
     private List<BanAn> allTables = List.of();
+    private Map<Integer, HoaDon> openOrdersByBan = new HashMap<>();
+    private final Timer tickTimer;
 
     public TableMapPanel(IntConsumer onTableClicked) {
         super(new BorderLayout(0, AppSpacing.MD));
         this.onTableClicked = onTableClicked;
         setBorder(BorderFactory.createEmptyBorder(AppSpacing.LG, AppSpacing.LG, AppSpacing.LG, AppSpacing.LG));
 
-        // Header
         JPanel header = new JPanel(new BorderLayout(0, AppSpacing.SM));
         header.setOpaque(false);
         JLabel title = new JLabel("Sơ đồ bàn");
         title.setFont(AppFonts.h1 == null ? title.getFont() : AppFonts.h1);
         header.add(title, BorderLayout.NORTH);
 
-        // Filter bar
         JPanel filterBar = new JPanel(new FlowLayout(FlowLayout.LEFT, AppSpacing.SM, 0));
         filterBar.setOpaque(false);
         filterBar.add(new JLabel("Trạng thái:"));
@@ -62,20 +65,54 @@ public class TableMapPanel extends JPanel {
 
         add(header, BorderLayout.NORTH);
 
-        // Grid
         grid.setOpaque(false);
         add(new JScrollPane(grid), BorderLayout.CENTER);
 
-        // Wire filters
         filterStatus.addActionListener(e -> render());
         search.onTextChanged(s -> render());
+
+        // Tick mỗi 60s update timer/tổng tiền cho bàn đang dùng
+        tickTimer = new Timer(60_000, e -> tickCards());
+        tickTimer.setRepeats(true);
+    }
+
+    @Override
+    public void addNotify() {
+        super.addNotify();
+        tickTimer.start();
+    }
+
+    @Override
+    public void removeNotify() {
+        super.removeNotify();
+        tickTimer.stop();
     }
 
     public void refresh() {
         SwingWorkerHelper.run(
-                tableService::listAll,
-                tables -> { allTables = tables; render(); },
-                err -> { allTables = List.of(); render(); });
+                () -> {
+                    List<BanAn> tables = tableService.listAll();
+                    List<HoaDon> openOrders = hoaDonDAO.findAllOpen();
+                    Map<Integer, HoaDon> map = new HashMap<>();
+                    for (HoaDon h : openOrders) map.put(h.getBanAnId(), h);
+                    return new Object[]{tables, map};
+                },
+                arr -> {
+                    @SuppressWarnings("unchecked")
+                    List<BanAn> tables = (List<BanAn>) arr[0];
+                    @SuppressWarnings("unchecked")
+                    Map<Integer, HoaDon> map = (Map<Integer, HoaDon>) arr[1];
+                    allTables = tables;
+                    openOrdersByBan = map;
+                    render();
+                },
+                err -> { allTables = List.of(); openOrdersByBan = new HashMap<>(); render(); });
+    }
+
+    private void tickCards() {
+        for (var comp : grid.getComponents()) {
+            if (comp instanceof TableCard tc) tc.updateOrderInfo();
+        }
     }
 
     private void render() {
@@ -89,7 +126,8 @@ public class TableMapPanel extends JPanel {
             else if ("DANG_DUNG".equals(b.getTrangThai())) countOcc++;
             else if ("DA_DAT".equals(b.getTrangThai())) countRes++;
             if (!matches(b, filter, query)) continue;
-            grid.add(new TableCard(b, this::handleClick,
+            HoaDon order = openOrdersByBan.get(b.getId());
+            grid.add(new TableCard(b, order, this::handleClick,
                     onReserveRequested == null ? null : ban -> onReserveRequested.accept(ban.getId()),
                     onPayRequested == null ? null : ban -> onPayRequested.accept(ban.getId())));
         }
@@ -102,8 +140,6 @@ public class TableMapPanel extends JPanel {
 
         grid.revalidate();
         grid.repaint();
-        // dummy to silence unused field warning
-        Object _c = AppColors.TABLE_EMPTY;
     }
 
     private boolean matches(BanAn b, String filter, String query) {
