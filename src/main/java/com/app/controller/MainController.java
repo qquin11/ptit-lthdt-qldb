@@ -2,14 +2,16 @@ package com.app.controller;
 
 import com.app.config.Session;
 import com.app.config.ThemeManager;
+import com.app.view.auth.ChangePasswordDialog;
 import com.app.view.common.ConfirmDialog;
 import com.app.view.common.Toast;
 import com.app.view.main.MainFrame;
 import com.app.view.main.Sidebar;
 import com.app.view.main.UserMenuPopup;
 
-import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
+import javax.swing.SwingUtilities;
+import java.awt.Frame;
 
 /**
  * Wire Sidebar navigation + TopBar actions + theme changes cho MainFrame.
@@ -53,10 +55,15 @@ public class MainController {
 
     private void showUserMenu() {
         JPopupMenu menu = UserMenuPopup.build(
-                e -> Toast.info(view, "Hồ sơ: " + Session.currentName()),
-                e -> Toast.info(view, "Đổi mật khẩu: tính năng sẽ có ở Phase 2"),
+                e -> Toast.info(view, "Hồ sơ: " + Session.currentName() + " · " + Session.currentRole()),
+                e -> openChangePassword(),
                 e -> logout());
         UserMenuPopup.showBelow(menu, view.getTopBarPanel().getUserButton());
+    }
+
+    private void openChangePassword() {
+        Frame owner = (Frame) SwingUtilities.getWindowAncestor(view);
+        new ChangePasswordDialog(owner).setVisible(true);
     }
 
     private void logout() {
