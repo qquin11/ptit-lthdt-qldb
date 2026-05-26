@@ -126,6 +126,7 @@ public class MainFrame extends JFrame {
     public void showPanel(String id) {
         cards.show(content, id);
         topBar.setBreadcrumb(breadcrumbFor(id));
+        topBar.updateNotificationCount();
         currentCard = id;
         if (Sidebar.ID_DASHBOARD.equals(id))  dashboardPanel.refresh();
         if (Sidebar.ID_TABLES.equals(id))     tableMapPanel.refresh();

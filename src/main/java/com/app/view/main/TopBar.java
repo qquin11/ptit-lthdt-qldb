@@ -26,6 +26,7 @@ public class TopBar extends JPanel {
     private final JLabel breadcrumb;
     private final SearchField search;
     private final GhostButton btnTheme;
+    private final GhostButton btnBell;
     private final GhostButton btnUser;
     private Supplier<Component> parentForUserMenu = () -> this;
 
@@ -61,11 +62,17 @@ public class TopBar extends JPanel {
             btnTheme.setText(themeIcon());
         });
 
+        btnBell = new GhostButton("🔔");
+        btnBell.setFont(com.app.config.AppFonts.icon == null ? btnBell.getFont() : com.app.config.AppFonts.icon);
+        btnBell.setToolTipText("Thông báo");
+        btnBell.addActionListener(e -> showNotifications());
+
         btnUser = new GhostButton("👤  " + Session.currentName());
         btnUser.setFont(com.app.config.AppFonts.icon == null ? btnUser.getFont() : com.app.config.AppFonts.icon);
         btnUser.setToolTipText("Tài khoản");
         btnUser.addActionListener(e -> showUserMenu());
 
+        actions.add(btnBell);
         actions.add(btnTheme);
         actions.add(btnUser);
         add(actions, BorderLayout.EAST);
@@ -101,6 +108,37 @@ public class TopBar extends JPanel {
 
     private String themeIcon() {
         return ThemeManager.current() == ThemeManager.Theme.DARK ? "☀" : "🌙";
+    }
+
+    /** Refresh badge số đặt bàn chờ + bàn dùng từ DB */
+    public void updateNotificationCount() {
+        try {
+            int waitingBooking = (int) new com.app.dao.DatBanDAO().findAll().stream()
+                    .filter(d -> "CHO_DEN".equals(d.getTrangThai())).count();
+            int activeOrders = new com.app.dao.HoaDonDAO().findAllOpen().size();
+            int total = waitingBooking + activeOrders;
+            btnBell.setText(total > 0 ? "🔔  " + total : "🔔");
+            btnBell.setToolTipText(String.format("%d đặt bàn chờ · %d order đang mở",
+                    waitingBooking, activeOrders));
+        } catch (Exception ignored) {
+            btnBell.setText("🔔");
+        }
+    }
+
+    private void showNotifications() {
+        try {
+            var dat = new com.app.dao.DatBanDAO().findAll().stream()
+                    .filter(d -> "CHO_DEN".equals(d.getTrangThai())).toList();
+            var hd = new com.app.dao.HoaDonDAO().findAllOpen();
+            StringBuilder msg = new StringBuilder("<html><b>Thông báo:</b><br>");
+            msg.append("• ").append(dat.size()).append(" đặt bàn đang chờ khách<br>");
+            msg.append("• ").append(hd.size()).append(" hóa đơn đang mở<br>");
+            msg.append("</html>");
+            javax.swing.JOptionPane.showMessageDialog(this, msg.toString(), "Thông báo",
+                    javax.swing.JOptionPane.INFORMATION_MESSAGE);
+        } catch (Exception ex) {
+            javax.swing.JOptionPane.showMessageDialog(this, "Không tải được thông báo: " + ex.getMessage());
+        }
     }
 
     public GhostButton getUserButton() { return btnUser; }
