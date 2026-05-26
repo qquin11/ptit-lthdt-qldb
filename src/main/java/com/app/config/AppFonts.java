@@ -46,8 +46,18 @@ public final class AppFonts {
         body    = new Font(family, Font.PLAIN, 14);
         small   = new Font(family, Font.PLAIN, 12);
         mono    = new Font(Font.MONOSPACED, Font.PLAIN, 13);
-        icon       = new Font("Segoe UI Emoji", Font.PLAIN, 16);
-        iconLarge  = new Font("Segoe UI Emoji", Font.PLAIN, 28);
+        // Segoe UI Symbol có nhiều ký tự đặc biệt nhất (⌂ ▦ ▤ ✦ ₫ ☻ ✉ ⚙ ☎ ⊞ ▥ ⇲ ☰)
+        icon       = pickAvailable(new String[]{"Segoe UI Symbol", "Segoe UI", "Dialog"}, Font.PLAIN, 18);
+        iconLarge  = pickAvailable(new String[]{"Segoe UI Symbol", "Segoe UI", "Dialog"}, Font.BOLD, 32);
+    }
+
+    private static Font pickAvailable(String[] candidates, int style, int size) {
+        var names = GraphicsEnvironment.getLocalGraphicsEnvironment().getAvailableFontFamilyNames();
+        java.util.Set<String> set = new java.util.HashSet<>(java.util.Arrays.asList(names));
+        for (String name : candidates) {
+            if (set.contains(name)) return new Font(name, style, size);
+        }
+        return new Font(Font.DIALOG, style, size);
     }
 
     /**

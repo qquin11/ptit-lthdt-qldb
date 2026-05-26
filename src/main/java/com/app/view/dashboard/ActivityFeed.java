@@ -54,7 +54,7 @@ public class ActivityFeed extends JPanel {
         @Override
         public Component getListCellRendererComponent(JList<? extends HoaDon> jList, HoaDon h,
                                                        int index, boolean selected, boolean focused) {
-            String status = h.getTrangThai() == 1 ? "✓" : "⏳";
+            String status = h.getTrangThai() == 1 ? "✓" : "○";
             String time = DateFormatter.fromSql(h.getNgayTao()) != null
                     ? DateFormatter.TIME.format(DateFormatter.fromSql(h.getNgayTao()))
                     : "--:--";

@@ -35,7 +35,7 @@ public class StatCard extends JPanel {
         JPanel top = new JPanel(new FlowLayout(FlowLayout.LEFT, AppSpacing.SM, 0));
         top.setOpaque(false);
         JLabel lblIcon = new JLabel(iconText);
-        lblIcon.setFont(AppFonts.icon == null ? lblIcon.getFont() : AppFonts.icon.deriveFont(20f));
+        lblIcon.setFont(new java.awt.Font("Segoe UI Symbol", java.awt.Font.PLAIN, 20));
         lblLabel = new JLabel(label);
         lblLabel.setFont(AppFonts.small == null ? lblLabel.getFont() : AppFonts.small);
         lblLabel.setForeground(AppColors.LIGHT_TEXT_MUTED);
