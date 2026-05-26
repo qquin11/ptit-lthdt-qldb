@@ -14,6 +14,18 @@ import java.util.List;
 
 public class HoaDonDAO extends BaseDAO {
 
+    public HoaDon findById(int id) {
+        try (PreparedStatement ps = getConnection().prepareStatement(
+                "SELECT * FROM hoa_don WHERE id = ?")) {
+            ps.setInt(1, id);
+            try (ResultSet rs = ps.executeQuery()) {
+                return rs.next() ? map(rs) : null;
+            }
+        } catch (Exception e) {
+            throw new DataAccessException("findById HoaDon", e);
+        }
+    }
+
     /** Hóa đơn chưa thanh toán cho bàn — dùng để load draft khi mở Order */
     public HoaDon findOpenByBan(int banId) {
         try (PreparedStatement ps = getConnection().prepareStatement(

@@ -171,8 +171,7 @@ public class PaymentPanel extends JPanel {
     public void openForOrder(int hoaDonId) {
         SwingWorkerHelper.run(
                 () -> {
-                    HoaDon hd = hoaDonDAO.findRecent(100).stream()
-                            .filter(h -> h.getId() == hoaDonId).findFirst().orElse(null);
+                    HoaDon hd = hoaDonDAO.findById(hoaDonId);
                     List<ChiTietHoaDon> items = orderService.getItems(hoaDonId);
                     return new Object[]{hd, items};
                 },

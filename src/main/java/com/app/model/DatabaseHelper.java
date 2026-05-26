@@ -27,22 +27,25 @@ public class DatabaseHelper {
     private static Connection connection = null;
 
     public static synchronized Connection getConnection() {
-        if (connection == null) {
-            try {
+        try {
+            // Một số DAO trong project dùng try-with-resources với connection,
+            // khiến singleton bị close. Re-open nếu cần để tránh crash.
+            if (connection == null || connection.isClosed()) {
                 File directory = new File(AppConfig.DB_DIR);
                 if (!directory.exists()) directory.mkdirs();
 
                 Class.forName("org.sqlite.JDBC");
+                boolean firstTime = (connection == null);
                 connection = DriverManager.getConnection(URL);
-                System.out.println(">>> Kết nối CSDL SQLite thành công!");
-
-                initializeDatabase();
-                runMigrations();
-
-            } catch (ClassNotFoundException | SQLException e) {
-                System.err.println("Lỗi kết nối SQLite: " + e.getMessage());
-                e.printStackTrace();
+                if (firstTime) {
+                    System.out.println(">>> Kết nối CSDL SQLite thành công!");
+                    initializeDatabase();
+                    runMigrations();
+                }
             }
+        } catch (ClassNotFoundException | SQLException e) {
+            System.err.println("Lỗi kết nối SQLite: " + e.getMessage());
+            e.printStackTrace();
         }
         return connection;
     }

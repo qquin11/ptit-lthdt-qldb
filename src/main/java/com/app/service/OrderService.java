@@ -66,18 +66,10 @@ public class OrderService {
         recalcTotal(hoaDonId);
     }
 
-    /** Tính lại tổng tiền (chưa VAT) và update HD. */
     public double recalcTotal(int hoaDonId) {
         List<ChiTietHoaDon> items = chiTietDAO.findByHoaDon(hoaDonId);
         double total = items.stream().mapToDouble(ChiTietHoaDon::getThanhTien).sum();
-
-        HoaDon h = new HoaDon();
-        h.setId(hoaDonId);
-        // Need full update via map
-        // Đơn giản: query lại + update
-        // (Production: build dedicated DAO method updateTotalOnly)
-        java.util.List<HoaDon> recent = hoaDonDAO.findRecent(100);
-        HoaDon target = recent.stream().filter(x -> x.getId() == hoaDonId).findFirst().orElse(null);
+        HoaDon target = hoaDonDAO.findById(hoaDonId);
         if (target != null) {
             target.setTongTien(total);
             hoaDonDAO.update(target);
