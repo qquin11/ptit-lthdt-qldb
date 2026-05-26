@@ -57,7 +57,7 @@ public class LoginFrame extends JFrame {
         btnEye.addActionListener(e -> togglePassword());
     }
 
-    // ===================== UI BUILDING =====================
+    // UI BUILDING
 
     private JPanel buildHeader() {
         JPanel header = new JPanel(new GridLayout(2, 1));
@@ -163,7 +163,7 @@ public class LoginFrame extends JFrame {
         btnEye.setText(passwordVisible ? "○" : "◉");
     }
 
-    // ===================== PUBLIC API CHO CONTROLLER =====================
+    // PUBLIC API CHO CONTROLLER
 
     public void onSubmit(BiConsumer<String, char[]> handler) {
         this.submitHandler = handler;

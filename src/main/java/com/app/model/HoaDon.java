@@ -14,8 +14,8 @@ public class HoaDon {
     private double vat;          // Mặc định 0.1
     private double giamGia;
     private int trangThai;       // 0: Chưa thanh toán, 1: Đã thanh toán
-    private double tienKhachDua; // Phase 04 migration
-    private String phuongThucTt; // Phase 04 migration (TIEN_MAT/CHUYEN_KHOAN/THE)
+    private double tienKhachDua; //  migration
+    private String phuongThucTt; //  migration (TIEN_MAT/CHUYEN_KHOAN/THE)
 
     public HoaDon() {}
 

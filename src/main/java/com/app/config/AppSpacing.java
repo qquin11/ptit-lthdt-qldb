@@ -18,7 +18,7 @@ public final class AppSpacing {
 
     private AppSpacing() {}
 
-    // ===================== SPACING (8px grid) =====================
+    // SPACING (8px grid)
 
     public static final int XS   = 4;
     public static final int SM   = 8;
@@ -28,14 +28,14 @@ public final class AppSpacing {
     public static final int XXL  = 32;
     public static final int XXXL = 48;
 
-    // ===================== BORDER RADIUS =====================
+    // BORDER RADIUS
 
     public static final int RADIUS_SM   = 4;
     public static final int RADIUS_MD   = 8;
     public static final int RADIUS_LG   = 12;
     public static final int RADIUS_PILL = 999;
 
-    // ===================== COMPONENT HEIGHTS (UX standards) =====================
+    // COMPONENT HEIGHTS (UX standards)
 
     /** Button & input field height chuẩn */
     public static final int H_INPUT  = 36;

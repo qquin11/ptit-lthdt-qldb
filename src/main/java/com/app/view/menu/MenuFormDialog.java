@@ -27,7 +27,7 @@ import java.util.function.Consumer;
 
 /**
  * Modal Add/Edit món ăn. Validation inline (border đỏ + error label dưới field).
- * Schema: chỉ có ten_mon, gia_tien, danh_muc_id, con_hang (KISS — không image, mô tả).
+ * Schema: ten_mon, gia_tien, danh_muc_id, con_hang.
  */
 public class MenuFormDialog extends JDialog {
 
@@ -70,7 +70,7 @@ public class MenuFormDialog extends JDialog {
 
     public void onSave(Consumer<MonAn> handler) { this.onSave = handler; }
 
-    // ===================== UI =====================
+    // UI
 
     private JPanel buildForm() {
         JPanel form = new JPanel();

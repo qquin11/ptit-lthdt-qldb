@@ -28,7 +28,7 @@ public class HelpDialog extends JDialog {
               Enter         Đăng nhập
 
             Order screen:
-              Ctrl + S      Lưu nháp (sẽ có Phase 2)
+              Ctrl + S      Lưu nháp
               F9            Chuyển sang thanh toán
 
             Sơ đồ bàn:

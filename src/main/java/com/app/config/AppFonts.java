@@ -12,9 +12,8 @@ import java.io.InputStream;
  * <p>Gọi {@link #init()} một lần khi app start (sau khi LaF được set, trước khi
  * tạo Frame). Sau init, các field public {@link #display}, {@link #h1}, ... có sẵn.
  *
- * <p><b>Inter font (YAGNI):</b> Phase 02 KHÔNG bundle Inter TTFs để giữ jar nhẹ.
- * Fallback dùng "Segoe UI" trên Windows / "SansSerif" cross-platform.
- * Phase 12 polish có thể bundle Inter TTFs nếu cần upgrade typography.
+ * <p>Chưa bundle Inter TTFs để giữ jar nhẹ. Fallback dùng "Segoe UI" trên Windows
+ * hoặc "SansSerif" cross-platform.
  */
 public final class AppFonts {
 
@@ -62,7 +61,7 @@ public final class AppFonts {
 
     /**
      * Try register Inter font (nếu TTF có trong classpath); fallback to system family.
-     * Phase 12 polish có thể bundle Inter TTFs nếu cần upgrade typography.
+     * có thể bundle Inter TTFs nếu cần upgrade typography.
      */
     private static String resolveFamily() {
         if (tryRegisterInter()) {

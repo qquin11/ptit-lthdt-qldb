@@ -20,7 +20,7 @@ public final class AppColors {
 
     private AppColors() {}
 
-    // ===================== STATUS COLORS (shared) =====================
+    // STATUS COLORS (shared)
 
     public static final Color SUCCESS = Color.decode("#10B981"); // green
     public static final Color WARNING = Color.decode("#F59E0B"); // amber
@@ -28,7 +28,7 @@ public final class AppColors {
     public static final Color DANGER  = Color.decode("#EF4444"); // red
     public static final Color NEUTRAL = Color.decode("#94A3B8"); // slate
 
-    // ===================== TABLE STATUS (alias) =====================
+    // TABLE STATUS (alias)
 
     /** Bàn trống — hiển thị xanh lá */
     public static final Color TABLE_EMPTY    = SUCCESS;
@@ -39,7 +39,7 @@ public final class AppColors {
     /** Bàn bảo trì/khóa — hiển thị xám */
     public static final Color TABLE_LOCKED   = NEUTRAL;
 
-    // ===================== LIGHT THEME TOKENS =====================
+    // LIGHT THEME TOKENS
 
     public static final Color LIGHT_BG           = Color.decode("#FFFFFF");
     public static final Color LIGHT_SURFACE      = Color.decode("#F8FAFC");
@@ -50,7 +50,7 @@ public final class AppColors {
     public static final Color LIGHT_ACCENT       = Color.decode("#2563EB");
     public static final Color LIGHT_ACCENT_HOVER = Color.decode("#1D4ED8");
 
-    // ===================== DARK THEME TOKENS =====================
+    // DARK THEME TOKENS
 
     public static final Color DARK_BG           = Color.decode("#0F172A");
     public static final Color DARK_SURFACE      = Color.decode("#1E293B");

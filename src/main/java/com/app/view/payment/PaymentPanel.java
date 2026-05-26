@@ -166,7 +166,7 @@ public class PaymentPanel extends JPanel {
         return l;
     }
 
-    // ===================== PUBLIC API =====================
+    // PUBLIC API
 
     public void openForOrder(int hoaDonId) {
         SwingWorkerHelper.run(
@@ -187,7 +187,7 @@ public class PaymentPanel extends JPanel {
                 err -> Toast.error(this, "Lỗi mở thanh toán: " + err.getMessage()));
     }
 
-    // ===================== INTERNAL =====================
+    // INTERNAL
 
     private void recalc() {
         double subtotal = detailModel.subtotal();
@@ -256,7 +256,7 @@ public class PaymentPanel extends JPanel {
         new InvoicePreviewDialog(currentOrder, detailModel.snapshot()).setVisible(true);
     }
 
-    // ===================== TABLE MODEL =====================
+    // TABLE MODEL
 
     private static class DetailModel extends AbstractTableModel {
         private final String[] cols = {"Tên món", "SL", "Đơn giá", "Thành tiền"};

@@ -9,7 +9,7 @@ import java.util.Base64;
 /**
  * SHA-256 + random salt. Format storage: <code>{base64Salt}:{base64Hash}</code>.
  *
- * <p>YAGNI: dùng SHA-256 thay BCrypt để không phải thêm dep. Đủ tốt cho POS đồ án.
+ * <p>Dùng SHA-256 thay BCrypt để không phải thêm dep, đủ tốt cho đồ án.
  *
  * <p>Migration: tài khoản cũ còn lưu plain text — {@link #verify} tự detect và migrate
  * lần đầu user đăng nhập đúng. Caller cần check {@link #needsRehash} sau verify success
@@ -55,7 +55,7 @@ public final class PasswordHasher {
         return stored != null && !stored.contains(":");
     }
 
-    // ===================== INTERNAL =====================
+    // INTERNAL
 
     private static byte[] digest(String plain, byte[] salt) {
         try {

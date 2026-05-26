@@ -84,7 +84,7 @@ public class ReservationPanel extends JPanel {
         refreshAvailability();
     }
 
-    // ===================== UI =====================
+    // UI
 
     private JPanel buildForm() {
         JPanel form = new JPanel();
@@ -151,7 +151,7 @@ public class ReservationPanel extends JPanel {
         return l;
     }
 
-    // ===================== LOGIC =====================
+    // LOGIC
 
     private void refreshAvailability() {
         LocalDateTime when = getSelectedDateTime();

@@ -34,7 +34,7 @@ import java.util.List;
 import java.util.function.IntConsumer;
 
 /**
- * Gọi món ⭐ — split 60/40 menu grid | order table với qty controls.
+ * Gọi món — split 60/40 menu grid | order table với qty controls.
  * F9 chuyển sang thanh toán, Esc về sơ đồ bàn.
  */
 public class OrderPanel extends JPanel {
@@ -83,7 +83,7 @@ public class OrderPanel extends JPanel {
         });
     }
 
-    // ===================== UI BUILDING =====================
+    // UI BUILDING
 
     private JPanel buildHeader() {
         JPanel header = new JPanel(new BorderLayout());
@@ -173,7 +173,7 @@ public class OrderPanel extends JPanel {
         return l;
     }
 
-    // ===================== PUBLIC API =====================
+    // PUBLIC API
 
     /** Mở order cho bàn (load draft hoặc create mới). */
     public void openForTable(int banId) {
@@ -189,7 +189,7 @@ public class OrderPanel extends JPanel {
                 err -> Toast.error(this, "Lỗi mở order: " + err.getMessage()));
     }
 
-    // ===================== INTERNAL =====================
+    // INTERNAL
 
     private void reloadMenu() {
         SwingWorkerHelper.run(
@@ -305,7 +305,7 @@ public class OrderPanel extends JPanel {
         if (onProceedPayment != null) onProceedPayment.accept(currentOrder.getId());
     }
 
-    // ===================== TABLE MODEL =====================
+    // TABLE MODEL
 
     private static class OrderTableModel extends AbstractTableModel {
         private final String[] cols = {"Món", "SL", "Đơn giá", "Thành tiền"};

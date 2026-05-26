@@ -21,7 +21,7 @@ public class SearchField extends JTextField {
         setPreferredSize(new Dimension(240, AppSpacing.H_INPUT));
         putClientProperty("JTextField.placeholderText", placeholder);
         putClientProperty("JTextField.showClearButton", true);
-        // Leading icon: dùng FlatLaf SVG nếu có (Phase 12 polish)
+        // Leading icon: dùng FlatLaf SVG nếu có
         // putClientProperty("JTextField.leadingIcon", IconLoader.load("search", 16));
     }
 

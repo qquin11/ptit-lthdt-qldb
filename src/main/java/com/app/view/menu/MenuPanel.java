@@ -55,7 +55,7 @@ public class MenuPanel extends JPanel {
         pagination.onPageChange(p -> renderPage());
     }
 
-    // ===================== UI =====================
+    // UI
 
     private JPanel buildHeader() {
         JPanel header = new JPanel(new BorderLayout(0, AppSpacing.SM));
@@ -126,7 +126,7 @@ public class MenuPanel extends JPanel {
         menu.show(table, x, y);
     }
 
-    // ===================== CRUD =====================
+    // CRUD
 
     public void refresh() {
         SwingWorkerHelper.run(
@@ -190,7 +190,7 @@ public class MenuPanel extends JPanel {
                 err -> Toast.error(this, err.getMessage()));
     }
 
-    // ===================== FILTER =====================
+    // FILTER
 
     private List<MonAn> filteredItems() {
         String query = search.getText().trim().toLowerCase();

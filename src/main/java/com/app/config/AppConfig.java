@@ -8,21 +8,21 @@ public final class AppConfig {
 
     private AppConfig() {}
 
-    // ===================== APP METADATA =====================
+    // APP METADATA
 
     public static final String APP_NAME    = "ResMan POS";
     public static final String APP_BRAND   = "Restaurant Manager";
     public static final String APP_VERSION = "1.0-SNAPSHOT";
     public static final String APP_VENDOR  = "PTIT LTHDT";
 
-    // ===================== PATHS =====================
+    // PATHS
 
     public static final String DB_DIR    = "./data";
     public static final String DB_FILE   = "nhahang.db";
     public static final String DB_PATH   = DB_DIR + "/" + DB_FILE;
     public static final String IMAGE_DIR = "./images";
 
-    // ===================== WINDOW SIZES =====================
+    // WINDOW SIZES
 
     public static final int MAIN_WIDTH      = 1280;
     public static final int MAIN_HEIGHT     = 800;
@@ -35,7 +35,7 @@ public final class AppConfig {
     public static final int INVOICE_WIDTH  = 380;
     public static final int INVOICE_HEIGHT = 600;
 
-    // ===================== PREFERENCES KEYS =====================
+    // PREFERENCES KEYS
 
     /** java.util.prefs key cho theme (LIGHT/DARK) */
     public static final String PREF_THEME = "theme";
@@ -44,7 +44,7 @@ public final class AppConfig {
     /** java.util.prefs key cho sidebar collapsed state */
     public static final String PREF_SIDEBAR_COLLAPSED = "sidebar_collapsed";
 
-    // ===================== BUSINESS RULES =====================
+    // BUSINESS RULES
 
     /** VAT mặc định cho hóa đơn (10%) — match schema hoa_don.vat DEFAULT 0.1 */
     public static final double DEFAULT_VAT_RATE = 0.10;

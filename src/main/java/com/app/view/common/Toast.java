@@ -41,7 +41,7 @@ public class Toast extends JPanel {
         add(msg, BorderLayout.CENTER);
     }
 
-    // ===================== STATIC API =====================
+    // STATIC API
 
     public static void success(Component parent, String msg) { show(parent, Type.SUCCESS, msg); }
     public static void warning(Component parent, String msg) { show(parent, Type.WARNING, msg); }
@@ -52,7 +52,7 @@ public class Toast extends JPanel {
         ToastManager.show(parent, new Toast(type, msg), DEFAULT_DURATION_MS);
     }
 
-    // ===================== HELPERS =====================
+    // HELPERS
 
     private static Color bgColorFor(Type type) {
         return switch (type) {

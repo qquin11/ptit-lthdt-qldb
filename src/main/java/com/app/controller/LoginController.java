@@ -49,7 +49,7 @@ public class LoginController {
         this.onSuccess = handler == null ? nv -> {} : handler;
     }
 
-    // ===================== INTERNAL =====================
+    // INTERNAL
 
     private void handleSubmit(String username, char[] password) {
         // Validate input

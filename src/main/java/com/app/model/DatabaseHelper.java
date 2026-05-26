@@ -13,12 +13,11 @@ import java.sql.Statement;
 /**
  * Connection singleton SQLite + auto-init schema + migration + seed.
  *
- * <p>Phase 04 changes:
+ * <p>Bao gồm:
  * <ul>
- *   <li>Fix bug infinite-loop pattern khi tạo bàn ăn</li>
- *   <li>Tạo 20 bàn (UI demo cần)</li>
+ *   <li>Tạo 20 bàn mặc định</li>
  *   <li>Hash password mock data (SHA-256+salt)</li>
- *   <li>Migration: ALTER TABLE hoa_don ADD tien_khach_dua + phuong_thuc_tt</li>
+ *   <li>Migration ALTER TABLE hoa_don thêm tien_khach_dua + phuong_thuc_tt</li>
  * </ul>
  */
 public class DatabaseHelper {
@@ -173,7 +172,7 @@ public class DatabaseHelper {
     }
 
     private static void mockData(Statement stmt) throws Exception {
-        // Hash passwords trước khi insert (Phase 04 security)
+        // Hash passwords trước khi insert
         String adminHash = PasswordHasher.hash("admin123");
         String staffHash = PasswordHasher.hash("staff123");
 

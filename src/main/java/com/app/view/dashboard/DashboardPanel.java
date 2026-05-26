@@ -19,7 +19,7 @@ import java.awt.GridLayout;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
-/** Dashboard với 3 KPI cards + activity feed (Phase 07). */
+/** Dashboard với 3 KPI cards + activity feed . */
 public class DashboardPanel extends JPanel {
 
     private final StatCard cardRevenue = new StatCard("₫", "Doanh thu hôm nay");

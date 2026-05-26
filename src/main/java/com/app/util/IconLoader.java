@@ -9,7 +9,7 @@ import java.util.Map;
 /**
  * Cache SVG icons từ classpath `/icons/`. Gracefully trả null nếu không có icon.
  *
- * <p>Phase 03 chưa bundle SVG nào — caller dùng emoji fallback hoặc null check.
+ * <p>Chưa bundle SVG nào — caller dùng emoji fallback hoặc null check.
  * Drop SVG files vào {@code src/main/resources/icons/} sẽ tự pick up.
  */
 public final class IconLoader {

@@ -119,7 +119,7 @@ public class EmployeePanel extends JPanel {
         return model.getRow(table.getSelectedRow());
     }
 
-    // ===================== CRUD =====================
+    // CRUD
 
     public void refresh() {
         SwingWorkerHelper.run(

@@ -32,7 +32,7 @@ public class MainFrame extends JFrame {
     private final JPanel    content;
     private final CardLayout cards;
 
-    // Panels (lazy init nếu nặng — Phase 1 init eagerly cho đơn giản)
+    // Panels — init eagerly cho đơn giản
     private final DashboardPanel   dashboardPanel;
     private final TableMapPanel    tableMapPanel;
     private final OrderPanel       orderPanel;
@@ -121,7 +121,7 @@ public class MainFrame extends JFrame {
         showPanel(currentCard);
     }
 
-    // ===================== Card navigation API =====================
+    // Card navigation API
 
     public void showPanel(String id) {
         cards.show(content, id);
@@ -177,7 +177,7 @@ public class MainFrame extends JFrame {
         };
     }
 
-    // ===================== Getters cho Controller =====================
+    // Getters cho Controller
 
     public Sidebar   getSidebarPanel() { return sidebar; }
     public TopBar    getTopBarPanel()  { return topBar; }

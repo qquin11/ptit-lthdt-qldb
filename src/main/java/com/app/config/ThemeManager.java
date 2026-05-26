@@ -75,7 +75,7 @@ public final class ThemeManager {
         listeners.remove(listener);
     }
 
-    // ===================== INTERNAL =====================
+    // INTERNAL
 
     private static void applyInternal(Theme theme, boolean notify) {
         try {
