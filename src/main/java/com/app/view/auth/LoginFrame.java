@@ -88,7 +88,7 @@ public class LoginFrame extends JFrame {
 
         // Username row
         form.add(new JLabel("Tài khoản"));
-        fieldUsername.putClientProperty("JTextField.placeholderText", "admin");
+        fieldUsername.putClientProperty("JTextField.placeholderText", "Nhập tài khoản (vd: admin)");
         fieldUsername.setPreferredSize(new Dimension(0, AppSpacing.H_INPUT));
         form.add(fieldUsername);
 

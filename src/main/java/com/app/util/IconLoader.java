@@ -3,7 +3,6 @@ package com.app.util;
 import com.formdev.flatlaf.extras.FlatSVGIcon;
 
 import javax.swing.Icon;
-import java.awt.Color;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -34,12 +33,4 @@ public final class IconLoader {
         return null;
     }
 
-    /** Load icon với màu tint (override fill color). */
-    public static Icon load(String name, int size, Color tint) {
-        Icon base = load(name, size);
-        if (base instanceof FlatSVGIcon svg && tint != null) {
-            return svg.derive(color -> tint);
-        }
-        return base;
-    }
 }

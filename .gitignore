@@ -60,4 +60,6 @@ docs/
 sources.txt
 thiet_ke_man_hinh.md
 screen*.png
+app-screenshot-*.png
 *-progress.md
+app.run.log
