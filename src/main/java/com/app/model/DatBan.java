@@ -4,7 +4,7 @@ public class DatBan {
     private int id;
     private int khachHangId;
     private int banAnId;
-    private String thoiGianDat; // YYYY-MM-DD HH:MM:SS
+    private String thoiGianDat; //YYYY-MM-DD HH:MM:SS
     private String ghiChu;
     private String trangThai;   // CHO_DEN, DA_NHAN, HUY
 

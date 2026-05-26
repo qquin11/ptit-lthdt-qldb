@@ -10,7 +10,6 @@ public class NhanVien {
 
     public NhanVien() {}
 
-
     public NhanVien(int id, String taiKhoan, String matKhau, String hoTen, String vaiTro, int trangThai) {
         this.id = id;
         this.taiKhoan = taiKhoan;

@@ -4,7 +4,7 @@ public class HoaDon {
     private int id;
     private int banAnId;
     private int nhanVienId;
-    private Integer khachHangId; // Dùng Integer thay vì int vì trường này có thể NULL (Khách vãng lai)
+    private Integer khachHangId; // NULL able
     private String ngayTao;      // YYYY-MM-DD HH:MM:SS
     private double tongTien;
     private double vat;          // Mặc định 0.1
