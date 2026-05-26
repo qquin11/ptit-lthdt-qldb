@@ -24,6 +24,7 @@ import java.awt.BorderLayout;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.Frame;
 import java.awt.GridLayout;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -56,9 +57,19 @@ public class ReservationPanel extends JPanel {
         super(new BorderLayout(0, AppSpacing.MD));
         setBorder(BorderFactory.createEmptyBorder(AppSpacing.LG, AppSpacing.LG, AppSpacing.LG, AppSpacing.LG));
 
+        JPanel header = new JPanel(new BorderLayout());
+        header.setOpaque(false);
         JLabel title = new JLabel("Đặt bàn trước");
         title.setFont(AppFonts.h1 == null ? title.getFont() : AppFonts.h1);
-        add(title, BorderLayout.NORTH);
+        header.add(title, BorderLayout.WEST);
+        SecondaryButton btnList = new SecondaryButton("📋  Danh sách đặt bàn");
+        btnList.addActionListener(e -> {
+            Frame owner = (Frame) javax.swing.SwingUtilities.getWindowAncestor(this);
+            new BookingListDialog(owner).setVisible(true);
+            refreshAvailability();
+        });
+        header.add(btnList, BorderLayout.EAST);
+        add(header, BorderLayout.NORTH);
 
         javax.swing.JSplitPane split = new javax.swing.JSplitPane(
                 javax.swing.JSplitPane.HORIZONTAL_SPLIT, buildForm(), buildAvailability());
