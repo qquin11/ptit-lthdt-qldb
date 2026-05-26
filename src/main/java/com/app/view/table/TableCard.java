@@ -22,19 +22,15 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.function.Consumer;
 
-/** Card hiển thị 1 bàn — số bàn + status dot + label + click handler. */
+/** Card hiển thị 1 bàn — chuột trái mở Order, chuột phải mở menu (Đặt/Thanh toán). */
 public class TableCard extends JPanel {
 
     private final BanAn ban;
-    private final JLabel lblName;
-    private final JLabel lblStatus;
-    private final JLabel lblDot;
     private final Color statusColor;
+    private final Consumer<BanAn> onClickHandler;
+    private final Consumer<BanAn> onReserveHandler;
+    private final Consumer<BanAn> onPayHandler;
     private boolean hover = false;
-
-    private Consumer<BanAn> onClickHandler;
-    private Consumer<BanAn> onReserveHandler;
-    private Consumer<BanAn> onPayHandler;
 
     public TableCard(BanAn ban, Consumer<BanAn> onClick) {
         this(ban, onClick, null, null);
@@ -42,16 +38,12 @@ public class TableCard extends JPanel {
 
     public TableCard(BanAn ban, Consumer<BanAn> onClick,
                      Consumer<BanAn> onReserve, Consumer<BanAn> onPay) {
-        this.onClickHandler = onClick;
-        this.onReserveHandler = onReserve;
-        this.onPayHandler = onPay;
-        initCard(ban);
-    }
-
-    private void initCard(BanAn ban) {
         super(new BorderLayout(0, AppSpacing.XS));
         this.ban = ban;
         this.statusColor = colorOf(ban.getTrangThai());
+        this.onClickHandler = onClick;
+        this.onReserveHandler = onReserve;
+        this.onPayHandler = onPay;
 
         setPreferredSize(new Dimension(160, 130));
         setBorder(BorderFactory.createCompoundBorder(
@@ -59,17 +51,16 @@ public class TableCard extends JPanel {
                 BorderFactory.createEmptyBorder(AppSpacing.MD, AppSpacing.MD, AppSpacing.MD, AppSpacing.MD)));
         setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 
-        lblName = new JLabel(ban.getTenBan(), SwingConstants.LEFT);
+        JLabel lblName = new JLabel(ban.getTenBan(), SwingConstants.LEFT);
         lblName.setFont(AppFonts.h2 == null ? lblName.getFont() : AppFonts.h2);
 
-        lblDot = new JLabel("●");
+        JLabel lblDot = new JLabel("●");
         lblDot.setForeground(statusColor);
         lblDot.setFont(AppFonts.h2 == null ? lblDot.getFont() : AppFonts.h2);
 
-        lblStatus = new JLabel(labelOf(ban.getTrangThai()));
+        JLabel lblStatus = new JLabel(labelOf(ban.getTrangThai()));
         lblStatus.setFont(AppFonts.small == null ? lblStatus.getFont() : AppFonts.small);
 
-        // Layout: [name top] [dot + status center]
         JPanel center = new JPanel(new GridLayout(2, 1, 0, AppSpacing.XS));
         center.setOpaque(false);
         center.add(lblDot);
