@@ -1,15 +1,21 @@
 package com.app.model;
 
 public class HoaDon {
+    public static final String PT_TIEN_MAT     = "TIEN_MAT";
+    public static final String PT_CHUYEN_KHOAN = "CHUYEN_KHOAN";
+    public static final String PT_THE          = "THE";
+
     private int id;
     private int banAnId;
     private int nhanVienId;
-    private Integer khachHangId; // NULL able
+    private Integer khachHangId; // NULLable
     private String ngayTao;      // YYYY-MM-DD HH:MM:SS
     private double tongTien;
     private double vat;          // Mặc định 0.1
     private double giamGia;
     private int trangThai;       // 0: Chưa thanh toán, 1: Đã thanh toán
+    private double tienKhachDua; //  migration
+    private String phuongThucTt; //  migration (TIEN_MAT/CHUYEN_KHOAN/THE)
 
     public HoaDon() {}
 
@@ -23,6 +29,7 @@ public class HoaDon {
         this.vat = vat;
         this.giamGia = giamGia;
         this.trangThai = trangThai;
+        this.phuongThucTt = PT_TIEN_MAT;
     }
 
     public int getId() { return id; }
@@ -51,4 +58,20 @@ public class HoaDon {
 
     public int getTrangThai() { return trangThai; }
     public void setTrangThai(int trangThai) { this.trangThai = trangThai; }
+
+    public double getTienKhachDua() { return tienKhachDua; }
+    public void setTienKhachDua(double tienKhachDua) { this.tienKhachDua = tienKhachDua; }
+
+    public String getPhuongThucTt() { return phuongThucTt; }
+    public void setPhuongThucTt(String phuongThucTt) { this.phuongThucTt = phuongThucTt; }
+
+    /** Tổng sau VAT - giảm giá */
+    public double getThanhToanCuoi() {
+        return tongTien * (1 + vat) - giamGia;
+    }
+
+    /** Tiền thừa = tien khách đưa - tổng cuối */
+    public double getTienThua() {
+        return tienKhachDua - getThanhToanCuoi();
+    }
 }
