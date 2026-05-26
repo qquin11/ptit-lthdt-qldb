@@ -26,6 +26,8 @@ public class TableMapPanel extends JPanel {
 
     private final TableService tableService = new TableService();
     private final IntConsumer onTableClicked;
+    private IntConsumer onReserveRequested;
+    private IntConsumer onPayRequested;
 
     private final JComboBox<String> filterStatus = new JComboBox<>(new String[]{
             "Tất cả", "Trống", "Đang dùng", "Đã đặt"});
@@ -87,7 +89,9 @@ public class TableMapPanel extends JPanel {
             else if ("DANG_DUNG".equals(b.getTrangThai())) countOcc++;
             else if ("DA_DAT".equals(b.getTrangThai())) countRes++;
             if (!matches(b, filter, query)) continue;
-            grid.add(new TableCard(b, this::handleClick));
+            grid.add(new TableCard(b, this::handleClick,
+                    onReserveRequested == null ? null : ban -> onReserveRequested.accept(ban.getId()),
+                    onPayRequested == null ? null : ban -> onPayRequested.accept(ban.getId())));
         }
 
         legend.setText(String.format(
@@ -116,4 +120,7 @@ public class TableMapPanel extends JPanel {
     private void handleClick(BanAn b) {
         if (onTableClicked != null) onTableClicked.accept(b.getId());
     }
+
+    public void setOnReserveRequested(IntConsumer h) { this.onReserveRequested = h; }
+    public void setOnPayRequested(IntConsumer h) { this.onPayRequested = h; }
 }

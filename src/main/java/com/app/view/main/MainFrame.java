@@ -59,6 +59,8 @@ public class MainFrame extends JFrame {
 
         dashboardPanel   = new DashboardPanel();
         tableMapPanel    = new TableMapPanel(this::openOrderForTable);
+        tableMapPanel.setOnPayRequested(this::openPaymentForTable);
+        tableMapPanel.setOnReserveRequested(banId -> showPanel(Sidebar.ID_RESERVATION));
         orderPanel       = new OrderPanel(this::openPaymentForOrder, this::backToTables);
         menuPanel        = new MenuPanel();
         employeePanel    = new EmployeePanel();
@@ -135,6 +137,16 @@ public class MainFrame extends JFrame {
         cards.show(content, Sidebar.ID_PAYMENT);
         topBar.setBreadcrumb("Sơ đồ bàn / Thanh toán");
         sidebar.setActive(Sidebar.ID_PAYMENT);
+    }
+
+    /** Right-click "Thanh toán" trên bàn DANG_DUNG → tìm HĐ mở rồi mở Payment. */
+    private void openPaymentForTable(int banId) {
+        var hd = new com.app.dao.HoaDonDAO().findOpenByBan(banId);
+        if (hd == null) {
+            com.app.view.common.Toast.warning(this, "Bàn này không có hóa đơn mở");
+            return;
+        }
+        openPaymentForOrder(hd.getId());
     }
 
     private void backToTables() {

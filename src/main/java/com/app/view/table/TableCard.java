@@ -7,8 +7,11 @@ import com.app.model.BanAn;
 
 import javax.swing.BorderFactory;
 import javax.swing.JLabel;
+import javax.swing.JMenuItem;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
 import javax.swing.border.LineBorder;
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -29,7 +32,23 @@ public class TableCard extends JPanel {
     private final Color statusColor;
     private boolean hover = false;
 
+    private Consumer<BanAn> onClickHandler;
+    private Consumer<BanAn> onReserveHandler;
+    private Consumer<BanAn> onPayHandler;
+
     public TableCard(BanAn ban, Consumer<BanAn> onClick) {
+        this(ban, onClick, null, null);
+    }
+
+    public TableCard(BanAn ban, Consumer<BanAn> onClick,
+                     Consumer<BanAn> onReserve, Consumer<BanAn> onPay) {
+        this.onClickHandler = onClick;
+        this.onReserveHandler = onReserve;
+        this.onPayHandler = onPay;
+        initCard(ban);
+    }
+
+    private void initCard(BanAn ban) {
         super(new BorderLayout(0, AppSpacing.XS));
         this.ban = ban;
         this.statusColor = colorOf(ban.getTrangThai());
@@ -60,10 +79,40 @@ public class TableCard extends JPanel {
         add(center, BorderLayout.CENTER);
 
         addMouseListener(new MouseAdapter() {
-            @Override public void mouseClicked(MouseEvent e) { onClick.accept(ban); }
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                if (SwingUtilities.isRightMouseButton(e)) {
+                    showContextMenu(e);
+                } else if (onClickHandler != null) {
+                    onClickHandler.accept(ban);
+                }
+            }
             @Override public void mouseEntered(MouseEvent e) { hover = true;  repaint(); }
             @Override public void mouseExited (MouseEvent e) { hover = false; repaint(); }
         });
+    }
+
+    private void showContextMenu(MouseEvent e) {
+        JPopupMenu menu = new JPopupMenu();
+        String trangThai = ban.getTrangThai();
+        boolean trong = "TRONG".equals(trangThai);
+        boolean dang = "DANG_DUNG".equals(trangThai);
+
+        JMenuItem mOpen = new JMenuItem(dang ? "Tiếp tục order" : "Gọi món");
+        mOpen.addActionListener(ev -> { if (onClickHandler != null) onClickHandler.accept(ban); });
+        menu.add(mOpen);
+
+        if (trong && onReserveHandler != null) {
+            JMenuItem mReserve = new JMenuItem("Đặt trước bàn này");
+            mReserve.addActionListener(ev -> onReserveHandler.accept(ban));
+            menu.add(mReserve);
+        }
+        if (dang && onPayHandler != null) {
+            JMenuItem mPay = new JMenuItem("Thanh toán bàn");
+            mPay.addActionListener(ev -> onPayHandler.accept(ban));
+            menu.add(mPay);
+        }
+        menu.show(this, e.getX(), e.getY());
     }
 
     @Override
