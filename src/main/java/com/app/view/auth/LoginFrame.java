@@ -65,7 +65,7 @@ public class LoginFrame extends JFrame {
         header.setBorder(BorderFactory.createEmptyBorder(AppSpacing.XXL, 0, AppSpacing.MD, 0));
 
         JLabel logo = new JLabel("🍽", SwingConstants.CENTER);
-        logo.setFont(logo.getFont().deriveFont(48f));
+        logo.setFont(new java.awt.Font("Segoe UI Emoji", java.awt.Font.PLAIN, 48));
 
         JLabel brand = new JLabel(AppConfig.APP_NAME, SwingConstants.CENTER);
         brand.setFont(AppFonts.display == null ? brand.getFont() : AppFonts.display);

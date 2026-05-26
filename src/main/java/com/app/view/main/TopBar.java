@@ -54,13 +54,15 @@ public class TopBar extends JPanel {
         actions.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, AppSpacing.MD));
 
         btnTheme = new GhostButton(themeIcon());
+        btnTheme.setFont(com.app.config.AppFonts.icon == null ? btnTheme.getFont() : com.app.config.AppFonts.icon);
         btnTheme.setToolTipText("Đổi theme (Light/Dark)");
         btnTheme.addActionListener(e -> {
             ThemeManager.toggle();
             btnTheme.setText(themeIcon());
         });
 
-        btnUser = new GhostButton("👤 " + Session.currentName());
+        btnUser = new GhostButton("👤  " + Session.currentName());
+        btnUser.setFont(com.app.config.AppFonts.icon == null ? btnUser.getFont() : com.app.config.AppFonts.icon);
         btnUser.setToolTipText("Tài khoản");
         btnUser.addActionListener(e -> showUserMenu());
 

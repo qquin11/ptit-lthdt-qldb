@@ -33,6 +33,7 @@ public class StatusBar extends JPanel {
 
         lblUser = newLabel("👤 " + Session.currentName() + " · " + Session.currentRole(),
                 SwingConstants.LEFT);
+        lblUser.setFont(AppFonts.icon == null ? lblUser.getFont() : AppFonts.icon.deriveFont(12f));
         lblClock = newLabel(LocalDateTime.now().format(CLOCK_FMT), SwingConstants.CENTER);
         lblDb = newLabel("● Online", SwingConstants.RIGHT);
         lblDb.setForeground(AppColors.SUCCESS);
@@ -49,6 +50,7 @@ public class StatusBar extends JPanel {
 
     public void refreshUser() {
         lblUser.setText("👤 " + Session.currentName() + " · " + Session.currentRole());
+        lblUser.setFont(AppFonts.icon == null ? lblUser.getFont() : AppFonts.icon.deriveFont(12f));
     }
 
     public void stop() {

@@ -40,7 +40,7 @@ public class SidebarItem extends JPanel {
         setOpaque(true);
 
         iconLabel = new JLabel(icon);
-        iconLabel.setFont(AppFonts.h2 == null ? iconLabel.getFont() : AppFonts.h2);
+        iconLabel.setFont(AppFonts.icon == null ? iconLabel.getFont() : AppFonts.icon);
 
         textLabel = new JLabel(text);
         textLabel.setFont(AppFonts.body == null ? textLabel.getFont() : AppFonts.body);

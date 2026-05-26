@@ -45,13 +45,18 @@ public class Sidebar extends JPanel {
         setBorder(BorderFactory.createMatteBorder(0, 0, 0, 1,
                 javax.swing.UIManager.getColor("Component.borderColor")));
 
-        // Header (logo)
-        JLabel logo = new JLabel("🍽  " + AppConfig.APP_NAME);
-        logo.setFont(AppFonts.h2 == null ? logo.getFont() : AppFonts.h2);
-        logo.setHorizontalAlignment(SwingConstants.LEFT);
-        logo.setBorder(BorderFactory.createEmptyBorder(
+        // Header (logo): tách icon + text vì 2 font khác nhau
+        JPanel header = new JPanel(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT, AppSpacing.SM, 0));
+        header.setOpaque(false);
+        header.setBorder(BorderFactory.createEmptyBorder(
                 AppSpacing.LG, AppSpacing.LG, AppSpacing.LG, AppSpacing.LG));
-        add(logo, BorderLayout.NORTH);
+        JLabel logoIcon = new JLabel("🍽");
+        logoIcon.setFont(AppFonts.iconLarge == null ? logoIcon.getFont() : AppFonts.iconLarge);
+        JLabel logoText = new JLabel(AppConfig.APP_NAME);
+        logoText.setFont(AppFonts.h2 == null ? logoText.getFont() : AppFonts.h2);
+        header.add(logoIcon);
+        header.add(logoText);
+        add(header, BorderLayout.NORTH);
 
         // Menu + footer
         JPanel body = new JPanel();

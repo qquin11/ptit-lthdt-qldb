@@ -29,6 +29,8 @@ public final class AppFonts {
     public static Font body;
     public static Font small;
     public static Font mono;
+    public static Font icon;       // emoji + symbol (Segoe UI Emoji có sẵn Windows)
+    public static Font iconLarge;
 
     private AppFonts() {}
 
@@ -44,6 +46,8 @@ public final class AppFonts {
         body    = new Font(family, Font.PLAIN, 14);
         small   = new Font(family, Font.PLAIN, 12);
         mono    = new Font(Font.MONOSPACED, Font.PLAIN, 13);
+        icon       = new Font("Segoe UI Emoji", Font.PLAIN, 16);
+        iconLarge  = new Font("Segoe UI Emoji", Font.PLAIN, 28);
     }
 
     /**
