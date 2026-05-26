@@ -8,6 +8,7 @@ import com.app.service.MenuService;
 import com.app.util.SwingWorkerHelper;
 import com.app.view.common.ConfirmDialog;
 import com.app.view.common.GhostButton;
+import com.app.view.common.Pagination;
 import com.app.view.common.PrimaryButton;
 import com.app.view.common.SearchField;
 import com.app.view.common.Toast;
@@ -18,9 +19,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
-import javax.swing.RowFilter;
 import javax.swing.SwingUtilities;
-import javax.swing.table.TableRowSorter;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.Frame;
@@ -32,12 +31,14 @@ public class MenuPanel extends JPanel {
     private final MenuService menuService = new MenuService();
     private final MenuTableModel model = new MenuTableModel();
     private final JTable table = new JTable(model);
-    private final TableRowSorter<MenuTableModel> sorter = new TableRowSorter<>(model);
 
     private final SearchField search = new SearchField("Tìm món...");
     private final JComboBox<Object> filterCategory = new JComboBox<>();
     private final JComboBox<String> filterStatus = new JComboBox<>(
             new String[]{"Tất cả", "Đang bán", "Hết hàng"});
+    private final Pagination pagination = new Pagination(15);
+    private java.util.List<MonAn> allItems = new java.util.ArrayList<>();
+    private java.util.List<com.app.model.DanhMuc> allCategories = new java.util.ArrayList<>();
 
     public MenuPanel() {
         super(new BorderLayout(0, AppSpacing.MD));
@@ -45,11 +46,13 @@ public class MenuPanel extends JPanel {
 
         add(buildHeader(), BorderLayout.NORTH);
         add(buildTable(),  BorderLayout.CENTER);
+        add(pagination,    BorderLayout.SOUTH);
 
         // Filter wiring
         search.onTextChanged(s -> applyFilter());
         filterCategory.addActionListener(e -> applyFilter());
         filterStatus.addActionListener(e -> applyFilter());
+        pagination.onPageChange(p -> renderPage());
     }
 
     // ===================== UI =====================
@@ -90,15 +93,12 @@ public class MenuPanel extends JPanel {
 
     private JScrollPane buildTable() {
         table.setRowHeight(36);
-        table.setRowSorter(sorter);
         // Right-click trên row → context menu (Sửa / Xóa)
         table.addMouseListener(new java.awt.event.MouseAdapter() {
             @Override
             public void mouseClicked(java.awt.event.MouseEvent e) {
                 if (e.getClickCount() == 2 && table.getSelectedRow() >= 0) {
-                    int viewRow = table.getSelectedRow();
-                    int modelRow = table.convertRowIndexToModel(viewRow);
-                    openForm(model.getRow(modelRow));
+                    openForm(model.getRow(table.getSelectedRow()));
                 }
                 if (javax.swing.SwingUtilities.isRightMouseButton(e)) {
                     int row = table.rowAtPoint(e.getPoint());
@@ -118,14 +118,8 @@ public class MenuPanel extends JPanel {
         javax.swing.JMenuItem mDelete = new javax.swing.JMenuItem("Xóa");
         mDelete.setForeground(new java.awt.Color(0xEF4444));
 
-        mEdit.addActionListener(e -> {
-            int row = table.convertRowIndexToModel(table.getSelectedRow());
-            openForm(model.getRow(row));
-        });
-        mDelete.addActionListener(e -> {
-            int row = table.convertRowIndexToModel(table.getSelectedRow());
-            deleteItem(model.getRow(row));
-        });
+        mEdit.addActionListener(e -> openForm(model.getRow(table.getSelectedRow())));
+        mDelete.addActionListener(e -> deleteItem(model.getRow(table.getSelectedRow())));
 
         menu.add(mEdit);
         menu.add(mDelete);
@@ -142,12 +136,14 @@ public class MenuPanel extends JPanel {
                     List<MonAn> items = (List<MonAn>) arr[0];
                     @SuppressWarnings("unchecked")
                     List<DanhMuc> cats = (List<DanhMuc>) arr[1];
-                    model.setData(items, cats);
+                    allItems = items;
+                    allCategories = cats;
 
-                    // Refresh filter combo
                     filterCategory.removeAllItems();
                     filterCategory.addItem("Tất cả");
                     for (DanhMuc d : cats) filterCategory.addItem(d);
+
+                    applyFilter();
                 },
                 err -> Toast.error(this, "Lỗi tải danh sách: " + err.getMessage()));
     }
@@ -196,21 +192,29 @@ public class MenuPanel extends JPanel {
 
     // ===================== FILTER =====================
 
-    private void applyFilter() {
+    private List<MonAn> filteredItems() {
         String query = search.getText().trim().toLowerCase();
         Object cat = filterCategory.getSelectedItem();
         String status = (String) filterStatus.getSelectedItem();
+        return allItems.stream().filter(m -> {
+            if (!query.isEmpty() && !m.getTenMon().toLowerCase().contains(query)) return false;
+            if (cat instanceof DanhMuc d && m.getDanhMucId() != d.getId()) return false;
+            if ("Đang bán".equals(status) && m.getConHang() != 1) return false;
+            if ("Hết hàng".equals(status) && m.getConHang() != 0) return false;
+            return true;
+        }).toList();
+    }
 
-        sorter.setRowFilter(new RowFilter<>() {
-            @Override
-            public boolean include(Entry<? extends MenuTableModel, ? extends Integer> entry) {
-                MonAn m = entry.getModel().getRow(entry.getIdentifier());
-                if (!query.isEmpty() && !m.getTenMon().toLowerCase().contains(query)) return false;
-                if (cat instanceof DanhMuc d && m.getDanhMucId() != d.getId()) return false;
-                if ("Đang bán".equals(status) && m.getConHang() != 1) return false;
-                if ("Hết hàng".equals(status) && m.getConHang() != 0) return false;
-                return true;
-            }
-        });
+    private void applyFilter() {
+        pagination.setTotalRows(filteredItems().size());
+        renderPage();
+    }
+
+    private void renderPage() {
+        List<MonAn> filtered = filteredItems();
+        int from = (pagination.currentPage() - 1) * pagination.pageSize();
+        int to = Math.min(from + pagination.pageSize(), filtered.size());
+        List<MonAn> pageItems = from < to ? filtered.subList(from, to) : List.of();
+        model.setData(pageItems, allCategories);
     }
 }

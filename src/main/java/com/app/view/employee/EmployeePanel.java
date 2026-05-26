@@ -7,6 +7,7 @@ import com.app.service.EmployeeService;
 import com.app.util.SwingWorkerHelper;
 import com.app.view.common.ConfirmDialog;
 import com.app.view.common.GhostButton;
+import com.app.view.common.Pagination;
 import com.app.view.common.PrimaryButton;
 import com.app.view.common.SearchField;
 import com.app.view.common.Toast;
@@ -18,9 +19,7 @@ import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
-import javax.swing.RowFilter;
 import javax.swing.SwingUtilities;
-import javax.swing.table.TableRowSorter;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.Frame;
@@ -31,8 +30,9 @@ public class EmployeePanel extends JPanel {
     private final EmployeeService employeeService = new EmployeeService();
     private final EmployeeTableModel model = new EmployeeTableModel();
     private final JTable table = new JTable(model);
-    private final TableRowSorter<EmployeeTableModel> sorter = new TableRowSorter<>(model);
     private final SearchField search = new SearchField("Tìm nhân viên...");
+    private final Pagination pagination = new Pagination(15);
+    private java.util.List<NhanVien> allItems = new java.util.ArrayList<>();
 
     public EmployeePanel() {
         super(new BorderLayout(0, AppSpacing.MD));
@@ -40,8 +40,10 @@ public class EmployeePanel extends JPanel {
 
         add(buildHeader(), BorderLayout.NORTH);
         add(buildTable(),  BorderLayout.CENTER);
+        add(pagination,    BorderLayout.SOUTH);
 
         search.onTextChanged(s -> applyFilter());
+        pagination.onPageChange(p -> renderPage());
     }
 
     private JPanel buildHeader() {
@@ -75,14 +77,12 @@ public class EmployeePanel extends JPanel {
 
     private JScrollPane buildTable() {
         table.setRowHeight(36);
-        table.setRowSorter(sorter);
 
         table.addMouseListener(new java.awt.event.MouseAdapter() {
             @Override
             public void mouseClicked(java.awt.event.MouseEvent e) {
                 if (e.getClickCount() == 2 && table.getSelectedRow() >= 0) {
-                    int row = table.convertRowIndexToModel(table.getSelectedRow());
-                    openForm(model.getRow(row));
+                    openForm(model.getRow(table.getSelectedRow()));
                 }
                 if (javax.swing.SwingUtilities.isRightMouseButton(e)) {
                     int row = table.rowAtPoint(e.getPoint());
@@ -116,7 +116,7 @@ public class EmployeePanel extends JPanel {
     }
 
     private NhanVien getSelected() {
-        return model.getRow(table.convertRowIndexToModel(table.getSelectedRow()));
+        return model.getRow(table.getSelectedRow());
     }
 
     // ===================== CRUD =====================
@@ -124,7 +124,7 @@ public class EmployeePanel extends JPanel {
     public void refresh() {
         SwingWorkerHelper.run(
                 employeeService::listAll,
-                model::setData,
+                items -> { allItems = items; applyFilter(); },
                 err -> Toast.error(this, "Lỗi: " + err.getMessage()));
     }
 
@@ -181,16 +181,24 @@ public class EmployeePanel extends JPanel {
                 err -> Toast.error(this, err.getMessage()));
     }
 
-    private void applyFilter() {
+    private java.util.List<NhanVien> filteredItems() {
         String query = search.getText().trim().toLowerCase();
-        sorter.setRowFilter(new RowFilter<>() {
-            @Override
-            public boolean include(Entry<? extends EmployeeTableModel, ? extends Integer> entry) {
-                if (query.isEmpty()) return true;
-                NhanVien n = entry.getModel().getRow(entry.getIdentifier());
-                return n.getHoTen().toLowerCase().contains(query)
-                        || n.getTaiKhoan().toLowerCase().contains(query);
-            }
-        });
+        if (query.isEmpty()) return allItems;
+        return allItems.stream()
+                .filter(n -> n.getHoTen().toLowerCase().contains(query)
+                          || n.getTaiKhoan().toLowerCase().contains(query))
+                .toList();
+    }
+
+    private void applyFilter() {
+        pagination.setTotalRows(filteredItems().size());
+        renderPage();
+    }
+
+    private void renderPage() {
+        var filtered = filteredItems();
+        int from = (pagination.currentPage() - 1) * pagination.pageSize();
+        int to = Math.min(from + pagination.pageSize(), filtered.size());
+        model.setData(from < to ? filtered.subList(from, to) : java.util.List.of());
     }
 }
