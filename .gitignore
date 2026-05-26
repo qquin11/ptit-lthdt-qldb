@@ -39,3 +39,25 @@ build/
 .DS_Store
 /.claude
 /.vs
+
+### IntelliJ legacy output ###
+out/
+
+### App runtime logs ###
+*.log
+app.err.log
+app.out.log
+
+### Local data (SQLite) ###
+data/*.db
+data/*.db-journal
+data/*.db-shm
+data/*.db-wal
+
+### Local notes & planning docs ###
+plans/
+docs/
+sources.txt
+thiet_ke_man_hinh.md
+screen*.png
+*-progress.md
