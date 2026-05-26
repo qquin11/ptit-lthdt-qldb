@@ -104,6 +104,15 @@ public class MainFrame extends JFrame {
                 refreshCurrent();
             }
         });
+        // Ctrl+K = focus search trên TopBar
+        root.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW)
+                .put(KeyStroke.getKeyStroke(KeyEvent.VK_K, java.awt.event.InputEvent.CTRL_DOWN_MASK), "search");
+        root.getActionMap().put("search", new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                topBar.focusSearch();
+            }
+        });
     }
 
     private String currentCard = Sidebar.ID_DASHBOARD;

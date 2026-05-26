@@ -73,6 +73,14 @@ public class OrderPanel extends JPanel {
         split.setResizeWeight(0.6);
         split.setDividerSize(6);
         add(split, BorderLayout.CENTER);
+
+        // F9 = thanh toán
+        javax.swing.InputMap im = getInputMap(WHEN_IN_FOCUSED_WINDOW);
+        javax.swing.ActionMap am = getActionMap();
+        im.put(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F9, 0), "pay");
+        am.put("pay", new javax.swing.AbstractAction() {
+            @Override public void actionPerformed(java.awt.event.ActionEvent e) { proceedPayment(); }
+        });
     }
 
     // ===================== UI BUILDING =====================

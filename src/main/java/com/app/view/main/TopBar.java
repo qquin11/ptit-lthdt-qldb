@@ -84,6 +84,11 @@ public class TopBar extends JPanel {
         search.onTextChanged(listener);
     }
 
+    public void focusSearch() {
+        search.requestFocusInWindow();
+        search.selectAll();
+    }
+
     public void setOnUserMenu(Runnable openMenu) {
         this.userMenuHandler = openMenu;
     }
