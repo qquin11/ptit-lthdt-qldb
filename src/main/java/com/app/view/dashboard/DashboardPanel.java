@@ -25,6 +25,7 @@ public class DashboardPanel extends JPanel {
     private final StatCard cardRevenue = new StatCard("💰", "Doanh thu hôm nay");
     private final StatCard cardTables  = new StatCard("🪑", "Bàn đang dùng");
     private final StatCard cardOrders  = new StatCard("📋", "Hóa đơn hôm nay");
+    private final RevenueChart chart = new RevenueChart();
     private final ActivityFeed feed = new ActivityFeed();
     private final JLabel lblDateTime;
 
@@ -60,7 +61,8 @@ public class DashboardPanel extends JPanel {
         JPanel body = new JPanel(new BorderLayout(0, AppSpacing.LG));
         body.setOpaque(false);
         body.add(cards, BorderLayout.NORTH);
-        body.add(feed,  BorderLayout.CENTER);
+        body.add(chart, BorderLayout.CENTER);
+        body.add(feed,  BorderLayout.SOUTH);
         add(body, BorderLayout.CENTER);
 
         Timer clock = new Timer(1000, e ->
@@ -85,6 +87,7 @@ public class DashboardPanel extends JPanel {
                     cardTables.setValue(occ + "/" + tables.size());
                     cardOrders.setValue(String.valueOf((int) arr[2]));
                     feed.refresh();
+                    chart.refresh();
                 },
                 err -> {
                     cardRevenue.setValue("--");
