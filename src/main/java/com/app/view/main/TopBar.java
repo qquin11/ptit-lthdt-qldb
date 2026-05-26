@@ -28,7 +28,9 @@ public class TopBar extends JPanel {
     private final GhostButton btnTheme;
     private final GhostButton btnBell;
     private final GhostButton btnUser;
+    private final GhostButton btnToggleSidebar;
     private Supplier<Component> parentForUserMenu = () -> this;
+    private Runnable onToggleSidebar;
 
     public TopBar() {
         setLayout(new BorderLayout());
@@ -36,11 +38,19 @@ public class TopBar extends JPanel {
         setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0,
                 javax.swing.UIManager.getColor("Component.borderColor")));
 
-        // Left: breadcrumb
+        // Left: toggle sidebar + breadcrumb
+        JPanel left = new JPanel(new FlowLayout(FlowLayout.LEFT, AppSpacing.XS, AppSpacing.XS));
+        left.setOpaque(false);
+        btnToggleSidebar = new GhostButton("☰");
+        btnToggleSidebar.setFont(com.app.config.AppFonts.icon == null ? btnToggleSidebar.getFont() : com.app.config.AppFonts.icon);
+        btnToggleSidebar.setToolTipText("Thu gọn / mở sidebar");
+        btnToggleSidebar.addActionListener(e -> { if (onToggleSidebar != null) onToggleSidebar.run(); });
+        left.add(btnToggleSidebar);
         breadcrumb = new JLabel("Trang chủ", SwingConstants.LEFT);
         breadcrumb.setFont(AppFonts.h2 == null ? breadcrumb.getFont() : AppFonts.h2);
-        breadcrumb.setBorder(BorderFactory.createEmptyBorder(0, AppSpacing.LG, 0, AppSpacing.LG));
-        add(breadcrumb, BorderLayout.WEST);
+        breadcrumb.setBorder(BorderFactory.createEmptyBorder(0, AppSpacing.SM, 0, AppSpacing.LG));
+        left.add(breadcrumb);
+        add(left, BorderLayout.WEST);
 
         // Center: search
         JPanel center = new JPanel(new FlowLayout(FlowLayout.CENTER, 0, AppSpacing.SM));
@@ -95,6 +105,8 @@ public class TopBar extends JPanel {
         search.requestFocusInWindow();
         search.selectAll();
     }
+
+    public void setOnToggleSidebar(Runnable r) { this.onToggleSidebar = r; }
 
     public void setOnUserMenu(Runnable openMenu) {
         this.userMenuHandler = openMenu;

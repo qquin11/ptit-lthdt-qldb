@@ -108,6 +108,9 @@ public class LoginFrame extends JFrame {
         options.setOpaque(false);
         options.add(cbRemember, BorderLayout.WEST);
         GhostButton btnForgot = new GhostButton("Quên mật khẩu?");
+        btnForgot.addActionListener(e -> javax.swing.JOptionPane.showMessageDialog(this,
+                "Liên hệ quản lý để được đặt lại mật khẩu.\n\nMặc định:\nadmin / admin123\nstaff / staff123",
+                "Quên mật khẩu", javax.swing.JOptionPane.INFORMATION_MESSAGE));
         options.add(btnForgot, BorderLayout.EAST);
         form.add(options);
 

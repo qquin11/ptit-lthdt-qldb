@@ -28,8 +28,9 @@ public class MainController {
         Sidebar sidebar = view.getSidebarPanel();
         sidebar.setOnNavigate(this::handleNav);
 
-        // TopBar user menu
+        // TopBar user menu + sidebar toggle
         view.getTopBarPanel().setOnUserMenu(this::showUserMenu);
+        view.getTopBarPanel().setOnToggleSidebar(() -> view.getSidebarPanel().toggleCollapsed());
 
         // Refresh UI khi theme đổi (cập nhật icons custom)
         ThemeManager.addThemeChangeListener(t -> {
