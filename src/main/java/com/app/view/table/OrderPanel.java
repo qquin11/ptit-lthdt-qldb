@@ -12,6 +12,7 @@ import com.app.util.CurrencyFormatter;
 import com.app.util.SwingWorkerHelper;
 import com.app.view.common.GhostButton;
 import com.app.view.common.PrimaryButton;
+import com.app.view.common.SearchField;
 import com.app.view.common.SecondaryButton;
 import com.app.view.common.Toast;
 
@@ -26,6 +27,7 @@ import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.table.AbstractTableModel;
 import java.awt.BorderLayout;
+import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.util.ArrayList;
 import java.util.List;
@@ -44,7 +46,11 @@ public class OrderPanel extends JPanel {
     private final Runnable onBack;
 
     private final JTabbedPane categoryTabs = new JTabbedPane();
+    private final SearchField searchMenu = new SearchField("Tìm món...");
     private final OrderTableModel orderModel = new OrderTableModel();
+    private final JTable orderTable = new JTable(orderModel);
+    private final java.util.Map<Integer, java.util.List<MonAn>> menuByCategory = new java.util.LinkedHashMap<>();
+    private java.util.List<MonAn> menuAll = java.util.List.of();
     private final JLabel lblHeader  = new JLabel();
     private final JLabel lblTotal   = new JLabel("0 đ");
     private final JLabel lblSubtotal = new JLabel("0 đ");
@@ -86,9 +92,16 @@ public class OrderPanel extends JPanel {
     private JPanel buildMenuSide() {
         JPanel left = new JPanel(new BorderLayout(0, AppSpacing.SM));
         left.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, AppSpacing.SM));
+
+        JPanel top = new JPanel(new BorderLayout(0, AppSpacing.XS));
+        top.setOpaque(false);
         JLabel t = new JLabel("Menu món ăn");
         t.setFont(AppFonts.h2 == null ? t.getFont() : AppFonts.h2);
-        left.add(t, BorderLayout.NORTH);
+        top.add(t, BorderLayout.NORTH);
+        top.add(searchMenu, BorderLayout.SOUTH);
+        left.add(top, BorderLayout.NORTH);
+
+        searchMenu.onTextChanged(s -> rebuildMenuTabs());
         left.add(categoryTabs, BorderLayout.CENTER);
         return left;
     }
@@ -101,9 +114,8 @@ public class OrderPanel extends JPanel {
         t.setFont(AppFonts.h2 == null ? t.getFont() : AppFonts.h2);
         right.add(t, BorderLayout.NORTH);
 
-        JTable table = new JTable(orderModel);
-        table.setRowHeight(32);
-        right.add(new JScrollPane(table), BorderLayout.CENTER);
+        orderTable.setRowHeight(32);
+        right.add(new JScrollPane(orderTable), BorderLayout.CENTER);
 
         // Footer: summary + actions
         JPanel footer = new JPanel(new BorderLayout(0, AppSpacing.SM));
@@ -122,18 +134,24 @@ public class OrderPanel extends JPanel {
 
         footer.add(summary, BorderLayout.CENTER);
 
-        JPanel buttons = new JPanel(new GridLayout(1, 3, AppSpacing.SM, 0));
-        buttons.setOpaque(false);
-        SecondaryButton btnRefresh = new SecondaryButton("↻ Tính lại");
-        btnRefresh.addActionListener(e -> recalc());
-        SecondaryButton btnRemove  = new SecondaryButton("🗑 Xóa món chọn");
-        btnRemove.addActionListener(e -> removeSelected(table.getSelectedRow()));
-        PrimaryButton btnPay = new PrimaryButton("💳 THANH TOÁN (F9)");
-        btnPay.addActionListener(e -> proceedPayment());
+        JPanel qtyRow = new JPanel(new FlowLayout(FlowLayout.LEFT, AppSpacing.XS, AppSpacing.XS));
+        qtyRow.setOpaque(false);
+        GhostButton btnMinus = new GhostButton("−  SL");
+        btnMinus.addActionListener(e -> changeQtySelected(-1));
+        GhostButton btnPlus  = new GhostButton("+  SL");
+        btnPlus.addActionListener(e -> changeQtySelected(+1));
+        SecondaryButton btnRemove  = new SecondaryButton("🗑  Xóa món chọn");
+        btnRemove.addActionListener(e -> removeSelected(orderTable.getSelectedRow()));
+        qtyRow.add(btnMinus);
+        qtyRow.add(btnPlus);
+        qtyRow.add(btnRemove);
 
-        buttons.add(btnRefresh);
-        buttons.add(btnRemove);
-        buttons.add(btnPay);
+        JPanel buttons = new JPanel(new BorderLayout(0, AppSpacing.XS));
+        buttons.setOpaque(false);
+        buttons.add(qtyRow, BorderLayout.NORTH);
+        PrimaryButton btnPay = new PrimaryButton("💳  THANH TOÁN");
+        btnPay.addActionListener(e -> proceedPayment());
+        buttons.add(btnPay, BorderLayout.CENTER);
         footer.add(buttons, BorderLayout.SOUTH);
 
         right.add(footer, BorderLayout.SOUTH);
@@ -167,17 +185,55 @@ public class OrderPanel extends JPanel {
 
     private void reloadMenu() {
         SwingWorkerHelper.run(
-                menuService::listCategories,
-                cats -> {
-                    categoryTabs.removeAll();
-                    // Tab "Tất cả"
-                    categoryTabs.addTab("Tất cả", buildMenuGrid(menuService.listAvailable()));
-                    for (var c : cats) {
-                        categoryTabs.addTab(c.getTenDanhMuc(),
-                                buildMenuGrid(menuService.listByCategory(c.getId())));
-                    }
+                () -> {
+                    var cats = menuService.listCategories();
+                    var all = menuService.listAvailable();
+                    java.util.Map<Integer, java.util.List<MonAn>> byCat = new java.util.LinkedHashMap<>();
+                    for (var c : cats) byCat.put(c.getId(), menuService.listByCategory(c.getId()));
+                    return new Object[]{cats, all, byCat};
+                },
+                arr -> {
+                    @SuppressWarnings("unchecked")
+                    var cats = (java.util.List<com.app.model.DanhMuc>) arr[0];
+                    @SuppressWarnings("unchecked")
+                    var all = (java.util.List<MonAn>) arr[1];
+                    @SuppressWarnings("unchecked")
+                    var byCat = (java.util.Map<Integer, java.util.List<MonAn>>) arr[2];
+                    menuAll = all;
+                    menuByCategory.clear();
+                    for (var c : cats) menuByCategory.put(c.getId(), byCat.getOrDefault(c.getId(), java.util.List.of()));
+                    rebuildMenuTabs();
                 },
                 err -> {});
+    }
+
+    private void rebuildMenuTabs() {
+        String q = searchMenu.getText().trim().toLowerCase();
+        categoryTabs.removeAll();
+        categoryTabs.addTab("Tất cả", buildMenuGrid(filterByText(menuAll, q)));
+        for (var entry : menuByCategory.entrySet()) {
+            int catId = entry.getKey();
+            String catName = menuService.listCategories().stream()
+                    .filter(c -> c.getId() == catId)
+                    .findFirst().map(c -> c.getTenDanhMuc()).orElse("Khác");
+            categoryTabs.addTab(catName, buildMenuGrid(filterByText(entry.getValue(), q)));
+        }
+    }
+
+    private java.util.List<MonAn> filterByText(java.util.List<MonAn> items, String q) {
+        if (q.isEmpty()) return items;
+        return items.stream().filter(m -> m.getTenMon().toLowerCase().contains(q)).toList();
+    }
+
+    private void changeQtySelected(int delta) {
+        int row = orderTable.getSelectedRow();
+        if (currentOrder == null || row < 0) return;
+        var item = orderModel.getRow(row);
+        int newQty = item.getSoLuong() + delta;
+        SwingWorkerHelper.run(
+                () -> { orderService.setQuantity(currentOrder.getId(), item.getMonAnId(), newQty); return null; },
+                v -> reloadItems(),
+                err -> Toast.error(this, err.getMessage()));
     }
 
     private JScrollPane buildMenuGrid(List<MonAn> items) {
