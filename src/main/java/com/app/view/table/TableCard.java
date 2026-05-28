@@ -124,7 +124,7 @@ public class TableCard extends JPanel {
         }
         if (openOrder.getTongTien() > 0) {
             double withVat = openOrder.getTongTien() * (1 + openOrder.getVat());
-            lblMoney.setText("₫ " + CurrencyFormatter.format(withVat));
+            lblMoney.setText(CurrencyFormatter.format(withVat));
         } else {
             lblMoney.setText(" ");
         }

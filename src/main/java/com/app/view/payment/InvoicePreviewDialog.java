@@ -45,7 +45,7 @@ public class InvoicePreviewDialog extends JDialog {
         JPanel buttons = new JPanel(new FlowLayout(FlowLayout.RIGHT, AppSpacing.SM, AppSpacing.SM));
         GhostButton btnClose = new GhostButton("Đóng");
         btnClose.addActionListener(e -> dispose());
-        PrimaryButton btnPrint = new PrimaryButton("🖨 In");
+        PrimaryButton btnPrint = new PrimaryButton("In hóa đơn");
         btnPrint.addActionListener(e -> {
             try {
                 ta.print();

@@ -22,7 +22,7 @@ import java.time.format.DateTimeFormatter;
 /** Dashboard với 3 KPI cards + activity feed . */
 public class DashboardPanel extends JPanel {
 
-    private final StatCard cardRevenue = new StatCard("₫", "Doanh thu hôm nay");
+    private final StatCard cardRevenue = new StatCard("▣", "Doanh thu hôm nay");
     private final StatCard cardTables  = new StatCard("▦", "Bàn đang dùng");
     private final StatCard cardOrders  = new StatCard("▤", "Hóa đơn hôm nay");
     private final RevenueChart chart = new RevenueChart();
@@ -66,7 +66,7 @@ public class DashboardPanel extends JPanel {
         add(body, BorderLayout.CENTER);
 
         Timer clock = new Timer(1000, e ->
-                lblDateTime.setText("🕐 " + LocalDateTime.now().format(
+                lblDateTime.setText(LocalDateTime.now().format(
                         DateTimeFormatter.ofPattern("HH:mm:ss · dd/MM/yyyy"))));
         clock.start();
     }
