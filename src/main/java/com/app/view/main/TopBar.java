@@ -43,6 +43,7 @@ public class TopBar extends JPanel {
         left.setOpaque(false);
         btnToggleSidebar = new GhostButton("☰");
         btnToggleSidebar.setFont(com.app.config.AppFonts.icon == null ? btnToggleSidebar.getFont() : com.app.config.AppFonts.icon);
+        btnToggleSidebar.setPreferredSize(null);
         btnToggleSidebar.setToolTipText("Thu gọn / mở sidebar");
         btnToggleSidebar.addActionListener(e -> { if (onToggleSidebar != null) onToggleSidebar.run(); });
         left.add(btnToggleSidebar);
@@ -66,6 +67,7 @@ public class TopBar extends JPanel {
 
         btnTheme = new GhostButton(themeIcon());
         btnTheme.setFont(com.app.config.AppFonts.icon == null ? btnTheme.getFont() : com.app.config.AppFonts.icon);
+        btnTheme.setPreferredSize(null);
         btnTheme.setToolTipText("Đổi theme (Light/Dark)");
         btnTheme.addActionListener(e -> {
             ThemeManager.toggle();
@@ -74,11 +76,13 @@ public class TopBar extends JPanel {
 
         btnBell = new GhostButton("✉");
         btnBell.setFont(com.app.config.AppFonts.icon == null ? btnBell.getFont() : com.app.config.AppFonts.icon);
+        btnBell.setPreferredSize(null);
         btnBell.setToolTipText("Thông báo");
         btnBell.addActionListener(e -> showNotifications());
 
         btnUser = new GhostButton("☻  " + Session.currentName());
         btnUser.setFont(com.app.config.AppFonts.icon == null ? btnUser.getFont() : com.app.config.AppFonts.icon);
+        btnUser.setPreferredSize(null);
         btnUser.setToolTipText("Tài khoản");
         btnUser.addActionListener(e -> showUserMenu());
 

@@ -31,7 +31,7 @@ public class Toast extends JPanel {
 
         JLabel icon = new JLabel(iconFor(type));
         icon.setForeground(Color.WHITE);
-        icon.setFont(AppFonts.h2 == null ? icon.getFont() : AppFonts.h2);
+        icon.setFont(AppFonts.icon == null ? icon.getFont() : AppFonts.icon.deriveFont(java.awt.Font.BOLD, 18f));
 
         JLabel msg = new JLabel("<html>" + escapeHtml(message) + "</html>");
         msg.setForeground(Color.WHITE);

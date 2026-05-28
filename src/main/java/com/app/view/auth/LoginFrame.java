@@ -99,6 +99,8 @@ public class LoginFrame extends JFrame {
         pwdRow.setOpaque(false);
         fieldPassword.putClientProperty("JTextField.placeholderText", "••••••••");
         fieldPassword.setPreferredSize(new Dimension(0, AppSpacing.H_INPUT));
+        btnEye.setFont(AppFonts.icon == null ? btnEye.getFont() : AppFonts.icon);
+        btnEye.setPreferredSize(null);
         btnEye.setToolTipText("Hiện/ẩn mật khẩu");
         pwdRow.add(fieldPassword, BorderLayout.CENTER);
         pwdRow.add(btnEye, BorderLayout.EAST);
