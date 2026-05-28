@@ -15,8 +15,15 @@ public class GhostButton extends JButton {
         setFont(AppFonts.body == null ? getFont() : AppFonts.body);
         setContentAreaFilled(false);
         setBorder(new EmptyBorder(AppSpacing.SM, AppSpacing.MD, AppSpacing.SM, AppSpacing.MD));
-        setPreferredSize(new Dimension(getPreferredSize().width, AppSpacing.H_INPUT));
         setFocusPainted(false);
         putClientProperty("JButton.buttonType", "borderless");
+    }
+
+    // Ép chiều cao tối thiểu nhưng để width tự tính theo text (tránh cắt chữ/icon thành "...")
+    @Override
+    public Dimension getPreferredSize() {
+        Dimension d = super.getPreferredSize();
+        d.height = Math.max(d.height, AppSpacing.H_INPUT);
+        return d;
     }
 }

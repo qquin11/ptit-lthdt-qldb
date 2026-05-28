@@ -14,7 +14,14 @@ public class SecondaryButton extends JButton {
         super(text);
         setFont(AppFonts.body == null ? getFont() : AppFonts.body);
         setBorder(new EmptyBorder(AppSpacing.SM, AppSpacing.LG, AppSpacing.SM, AppSpacing.LG));
-        setPreferredSize(new Dimension(getPreferredSize().width, AppSpacing.H_INPUT));
         setFocusPainted(false);
+    }
+
+    // Ép chiều cao tối thiểu nhưng để width tự tính theo text (tránh cắt chữ thành "...")
+    @Override
+    public Dimension getPreferredSize() {
+        Dimension d = super.getPreferredSize();
+        d.height = Math.max(d.height, AppSpacing.H_INPUT);
+        return d;
     }
 }
