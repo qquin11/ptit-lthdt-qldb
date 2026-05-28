@@ -1,0 +1,156 @@
+package com.app.view.main;
+
+import com.app.config.AppFonts;
+import com.app.config.AppSpacing;
+import com.app.config.Session;
+import com.app.config.ThemeManager;
+import com.app.view.common.GhostButton;
+import com.app.view.common.SearchField;
+
+import javax.swing.BorderFactory;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.SwingConstants;
+import java.awt.BorderLayout;
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.util.function.Consumer;
+import java.util.function.Supplier;
+
+/**
+ * TopBar 56px — breadcrumb (left) + search (center) + actions (right: theme toggle, user menu).
+ */
+public class TopBar extends JPanel {
+
+    private final JLabel breadcrumb;
+    private final SearchField search;
+    private final GhostButton btnTheme;
+    private final GhostButton btnBell;
+    private final GhostButton btnUser;
+    private final GhostButton btnToggleSidebar;
+    private Supplier<Component> parentForUserMenu = () -> this;
+    private Runnable onToggleSidebar;
+
+    public TopBar() {
+        setLayout(new BorderLayout());
+        setPreferredSize(new Dimension(100, AppSpacing.H_TOPBAR));
+        setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0,
+                javax.swing.UIManager.getColor("Component.borderColor")));
+
+        // Left: toggle sidebar + breadcrumb
+        JPanel left = new JPanel(new FlowLayout(FlowLayout.LEFT, AppSpacing.XS, AppSpacing.XS));
+        left.setOpaque(false);
+        btnToggleSidebar = new GhostButton("☰");
+        btnToggleSidebar.setFont(com.app.config.AppFonts.icon == null ? btnToggleSidebar.getFont() : com.app.config.AppFonts.icon);
+        btnToggleSidebar.setToolTipText("Thu gọn / mở sidebar");
+        btnToggleSidebar.addActionListener(e -> { if (onToggleSidebar != null) onToggleSidebar.run(); });
+        left.add(btnToggleSidebar);
+        breadcrumb = new JLabel("Trang chủ", SwingConstants.LEFT);
+        breadcrumb.setFont(AppFonts.h2 == null ? breadcrumb.getFont() : AppFonts.h2);
+        breadcrumb.setBorder(BorderFactory.createEmptyBorder(0, AppSpacing.SM, 0, AppSpacing.LG));
+        left.add(breadcrumb);
+        add(left, BorderLayout.WEST);
+
+        // Center: search
+        JPanel center = new JPanel(new FlowLayout(FlowLayout.CENTER, 0, AppSpacing.SM));
+        center.setOpaque(false);
+        search = new SearchField("Tìm kiếm... (Ctrl+K)");
+        center.add(search);
+        add(center, BorderLayout.CENTER);
+
+        // Right: actions
+        JPanel actions = new JPanel(new FlowLayout(FlowLayout.RIGHT, AppSpacing.SM, AppSpacing.SM));
+        actions.setOpaque(false);
+        actions.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, AppSpacing.MD));
+
+        btnTheme = new GhostButton(themeIcon());
+        btnTheme.setFont(com.app.config.AppFonts.icon == null ? btnTheme.getFont() : com.app.config.AppFonts.icon);
+        btnTheme.setToolTipText("Đổi theme (Light/Dark)");
+        btnTheme.addActionListener(e -> {
+            ThemeManager.toggle();
+            btnTheme.setText(themeIcon());
+        });
+
+        btnBell = new GhostButton("✉");
+        btnBell.setFont(com.app.config.AppFonts.icon == null ? btnBell.getFont() : com.app.config.AppFonts.icon);
+        btnBell.setToolTipText("Thông báo");
+        btnBell.addActionListener(e -> showNotifications());
+
+        btnUser = new GhostButton(Session.currentName());
+        btnUser.setToolTipText("Tài khoản");
+        btnUser.addActionListener(e -> showUserMenu());
+
+        actions.add(btnBell);
+        actions.add(btnTheme);
+        actions.add(btnUser);
+        add(actions, BorderLayout.EAST);
+    }
+
+    /** Update breadcrumb khi chuyển panel */
+    public void setBreadcrumb(String text) {
+        breadcrumb.setText(text);
+    }
+
+    public void refreshUser() {
+        btnUser.setText(Session.currentName());
+    }
+
+    public void onSearch(Consumer<String> listener) {
+        search.onTextChanged(listener);
+    }
+
+    public void focusSearch() {
+        search.requestFocusInWindow();
+        search.selectAll();
+    }
+
+    public void setOnToggleSidebar(Runnable r) { this.onToggleSidebar = r; }
+
+    public void setOnUserMenu(Runnable openMenu) {
+        this.userMenuHandler = openMenu;
+    }
+
+    private Runnable userMenuHandler;
+
+    private void showUserMenu() {
+        if (userMenuHandler != null) userMenuHandler.run();
+    }
+
+    private String themeIcon() {
+        return ThemeManager.current() == ThemeManager.Theme.DARK ? "☀" : "☾";
+    }
+
+    /** Refresh badge số đặt bàn chờ + bàn dùng từ DB */
+    public void updateNotificationCount() {
+        try {
+            int waitingBooking = (int) new com.app.dao.DatBanDAO().findAll().stream()
+                    .filter(d -> "CHO_DEN".equals(d.getTrangThai())).count();
+            int activeOrders = new com.app.dao.HoaDonDAO().findAllOpen().size();
+            int total = waitingBooking + activeOrders;
+            btnBell.setText(total > 0 ? "✉  " + total : "✉");
+            btnBell.setToolTipText(String.format("%d đặt bàn chờ · %d order đang mở",
+                    waitingBooking, activeOrders));
+        } catch (Exception ignored) {
+            btnBell.setText("✉");
+        }
+    }
+
+    private void showNotifications() {
+        try {
+            var dat = new com.app.dao.DatBanDAO().findAll().stream()
+                    .filter(d -> "CHO_DEN".equals(d.getTrangThai())).toList();
+            var hd = new com.app.dao.HoaDonDAO().findAllOpen();
+            StringBuilder msg = new StringBuilder("<html><b>Thông báo:</b><br>");
+            msg.append("• ").append(dat.size()).append(" đặt bàn đang chờ khách<br>");
+            msg.append("• ").append(hd.size()).append(" hóa đơn đang mở<br>");
+            msg.append("</html>");
+            javax.swing.JOptionPane.showMessageDialog(this, msg.toString(), "Thông báo",
+                    javax.swing.JOptionPane.INFORMATION_MESSAGE);
+        } catch (Exception ex) {
+            javax.swing.JOptionPane.showMessageDialog(this, "Không tải được thông báo: " + ex.getMessage());
+        }
+    }
+
+    public GhostButton getUserButton() { return btnUser; }
+}

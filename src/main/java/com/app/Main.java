@@ -1,46 +1,61 @@
 package com.app;
 
+import com.app.config.ThemeManager;
+import com.app.controller.LoginController;
 import com.app.controller.MainController;
 import com.app.model.DatabaseHelper;
-import com.app.view.MainFrame;
+import com.app.view.auth.LoginFrame;
+import com.app.view.main.MainFrame;
+
+import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
-import javax.swing.UIManager;
 
+/**
+ * Entry point ResMan POS.
+ *
+ * <p>Thứ tự khởi tạo:
+ * <ol>
+ *   <li>{@link ThemeManager#init()} — FlatLaf theme + fonts (TRƯỚC mọi Swing component)</li>
+ *   <li>{@link DatabaseHelper#getConnection()} — init/migrate SQLite</li>
+ *   <li>{@link LoginFrame} → on success → {@link MainFrame}</li>
+ *   <li>Logout từ MainFrame → quay về LoginFrame (loop)</li>
+ * </ol>
+ */
 public class Main {
+
     public static void main(String[] args) {
-        System.out.println("Đang khởi tạo kết nối cơ sở dữ liệu...");
-        java.sql.Connection conn = com.app.model.DatabaseHelper.getConnection();
+        // Theme TRƯỚC khi tạo bất kỳ Swing component
+        ThemeManager.init();
+        SwingUtilities.invokeLater(Main::startUi);
+    }
 
-        // Nếu kết nối thành công (conn không null), hiển thị hộp thoại thông báo trực quan
-        if (conn != null) {
-            javax.swing.JOptionPane.showMessageDialog(
-                    null,
-                    "Kết nối cơ sở dữ liệu SQLite thành công!\nHệ thống đã sẵn sàng.",
-                    "Thông Báo Hệ Thống",
-                    javax.swing.JOptionPane.INFORMATION_MESSAGE
-            );
-        } else {
-            // Trường hợp lỗi kết nối, cảnh báo cho người dùng biết
-            javax.swing.JOptionPane.showMessageDialog(
-                    null,
-                    "Lỗi: Không thể kết nối đến cơ sở dữ liệu!\nVui lòng kiểm tra lại hệ thống.",
-                    "Lỗi Nghiêm Trọng",
-                    javax.swing.JOptionPane.ERROR_MESSAGE
-            );
+    private static void startUi() {
+        // Init DB (auto-create schema + migration lần đầu)
+        if (DatabaseHelper.getConnection() == null) {
+            JOptionPane.showMessageDialog(null,
+                    "Lỗi: Không thể kết nối đến cơ sở dữ liệu!",
+                    "Lỗi Nghiêm Trọng", JOptionPane.ERROR_MESSAGE);
+            System.exit(1);
         }
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+        openLogin();
+    }
 
-                MainFrame frame = new MainFrame();
-                new MainController(frame);
-                frame.setVisible(true);
-            }
+    /** Hiển thị Login → sau khi auth OK → mở MainFrame. */
+    private static void openLogin() {
+        LoginFrame login = new LoginFrame();
+        LoginController loginController = new LoginController(login);
+        loginController.setOnLoginSuccess(user -> {
+            login.dispose();
+            openMain();
         });
+        login.setVisible(true);
+    }
+
+    /** Sau login → MainFrame. Logout → quay về Login. */
+    private static void openMain() {
+        MainFrame frame = new MainFrame();
+        MainController controller = new MainController(frame);
+        controller.setOnLogout(Main::openLogin);
+        frame.setVisible(true);
     }
 }
