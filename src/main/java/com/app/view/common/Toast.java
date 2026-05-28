@@ -33,7 +33,8 @@ public class Toast extends JPanel {
         icon.setForeground(Color.WHITE);
         icon.setFont(AppFonts.icon == null ? icon.getFont() : AppFonts.icon.deriveFont(java.awt.Font.BOLD, 18f));
 
-        JLabel msg = new JLabel("<html>" + escapeHtml(message) + "</html>");
+        // Giới hạn width để message dài tự wrap nhiều dòng, không kéo toast rộng quá rồi bị cắt chữ
+        JLabel msg = new JLabel("<html><div style='width:260px'>" + escapeHtml(message) + "</div></html>");
         msg.setForeground(Color.WHITE);
         msg.setFont(AppFonts.body == null ? msg.getFont() : AppFonts.body);
 
