@@ -78,32 +78,33 @@ public class LoginFrame extends JFrame {
     }
 
     private JPanel buildForm() {
-        JPanel form = new JPanel();
-        form.setLayout(new GridLayout(0, 1, 0, AppSpacing.SM));
-        form.setBorder(BorderFactory.createEmptyBorder(
-                AppSpacing.LG, AppSpacing.XXL, AppSpacing.LG, AppSpacing.XXL));
+        // MigLayout để field giữ đúng chiều cao H_INPUT (GridLayout ép mọi hàng bằng nhau,
+        // bỏ qua preferredSize nên field bị nén thấp hơn cỡ chữ)
+        String hInput = "h " + AppSpacing.H_INPUT + "!";
+        JPanel form = new JPanel(new net.miginfocom.swing.MigLayout(
+                "wrap 1, fillx, insets " + AppSpacing.LG + " " + AppSpacing.XXL
+                        + " " + AppSpacing.LG + " " + AppSpacing.XXL + ", gapy " + AppSpacing.XS,
+                "[grow,fill]"));
 
         JLabel lblTitle = new JLabel("Đăng nhập hệ thống", SwingConstants.CENTER);
         lblTitle.setFont(AppFonts.h2 == null ? lblTitle.getFont() : AppFonts.h2);
-        form.add(lblTitle);
+        form.add(lblTitle, "align center, gapbottom " + AppSpacing.SM);
 
         // Username row
         form.add(new JLabel("Tài khoản"));
         fieldUsername.putClientProperty("JTextField.placeholderText", "Nhập tài khoản (vd: admin)");
-        fieldUsername.setPreferredSize(new Dimension(0, AppSpacing.H_INPUT));
-        form.add(fieldUsername);
+        form.add(fieldUsername, hInput);
 
         // Password row + eye toggle (inner panel)
-        form.add(new JLabel("Mật khẩu"));
+        form.add(new JLabel("Mật khẩu"), "gaptop " + AppSpacing.SM);
         JPanel pwdRow = new JPanel(new BorderLayout(AppSpacing.XS, 0));
         pwdRow.setOpaque(false);
         fieldPassword.putClientProperty("JTextField.placeholderText", "••••••••");
-        fieldPassword.setPreferredSize(new Dimension(0, AppSpacing.H_INPUT));
         btnEye.setFont(AppFonts.icon == null ? btnEye.getFont() : AppFonts.icon);
         btnEye.setToolTipText("Hiện/ẩn mật khẩu");
         pwdRow.add(fieldPassword, BorderLayout.CENTER);
         pwdRow.add(btnEye, BorderLayout.EAST);
-        form.add(pwdRow);
+        form.add(pwdRow, hInput);
 
         // Remember me + forgot
         JPanel options = new JPanel(new BorderLayout());
@@ -114,16 +115,16 @@ public class LoginFrame extends JFrame {
                 "Liên hệ quản lý để được đặt lại mật khẩu.\n\nMặc định:\nadmin / admin123\nstaff / staff123",
                 "Quên mật khẩu", javax.swing.JOptionPane.INFORMATION_MESSAGE));
         options.add(btnForgot, BorderLayout.EAST);
-        form.add(options);
+        form.add(options, "gaptop " + AppSpacing.XS);
 
         // Submit button
-        form.add(btnLogin);
+        form.add(btnLogin, hInput + ", gaptop " + AppSpacing.SM);
 
         // Error label
         lblError.setForeground(AppColors.DANGER);
         lblError.setHorizontalAlignment(SwingConstants.CENTER);
         lblError.setFont(AppFonts.small == null ? lblError.getFont() : AppFonts.small);
-        form.add(lblError);
+        form.add(lblError, "align center");
 
         // Clear error khi user gõ
         DocumentListener clear = new DocumentListener() {
