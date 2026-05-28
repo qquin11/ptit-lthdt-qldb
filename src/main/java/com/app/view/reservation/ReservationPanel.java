@@ -49,7 +49,7 @@ public class ReservationPanel extends JPanel {
     private final JSpinner   spinnerDateTime = createDateTimeSpinner();
     private final JLabel     lblSelectedTable = new JLabel("(chưa chọn)");
     private final JTextArea  fieldNote = new JTextArea(3, 20);
-    private final JPanel     tableGrid = new JPanel(new GridLayout(0, 5, AppSpacing.SM, AppSpacing.SM));
+    private final JPanel     tableGrid = new JPanel(new FlowLayout(FlowLayout.LEFT, AppSpacing.SM, AppSpacing.SM));
 
     private Integer selectedBanId = null;
 

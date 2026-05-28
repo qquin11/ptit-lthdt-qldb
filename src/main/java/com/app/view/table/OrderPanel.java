@@ -246,7 +246,8 @@ public class OrderPanel extends JPanel {
     }
 
     private JScrollPane buildMenuGrid(List<MonAn> items) {
-        JPanel grid = new JPanel(new GridLayout(0, 3, AppSpacing.SM, AppSpacing.SM));
+        // FlowLayout để menu card auto wrap khi panel order narrow
+        JPanel grid = new JPanel(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT, AppSpacing.SM, AppSpacing.SM));
         grid.setBorder(BorderFactory.createEmptyBorder(AppSpacing.SM, AppSpacing.SM, AppSpacing.SM, AppSpacing.SM));
         for (MonAn m : items) {
             grid.add(new MenuCard(m, this::onAddItem));

@@ -17,7 +17,6 @@ import javax.swing.JScrollPane;
 import javax.swing.Timer;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
-import java.awt.GridLayout;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -35,7 +34,8 @@ public class TableMapPanel extends JPanel {
     private final JComboBox<String> filterStatus = new JComboBox<>(new String[]{
             "Tất cả", "Trống", "Đang dùng", "Đã đặt"});
     private final SearchField search = new SearchField("Tìm bàn (vd: Bàn 5)...");
-    private final JPanel grid = new JPanel(new GridLayout(0, 5, AppSpacing.MD, AppSpacing.MD));
+    // FlowLayout tự xuống dòng khi window narrow → cards giữ preferred size khỏi bị bóp
+    private final JPanel grid = new JPanel(new FlowLayout(FlowLayout.LEFT, AppSpacing.MD, AppSpacing.MD));
     private final JLabel legend = new JLabel(" ");
 
     private List<BanAn> allTables = List.of();
