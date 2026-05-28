@@ -49,7 +49,7 @@ public class ReservationPanel extends JPanel {
     private final JSpinner   spinnerDateTime = createDateTimeSpinner();
     private final JLabel     lblSelectedTable = new JLabel("(chưa chọn)");
     private final JTextArea  fieldNote = new JTextArea(3, 20);
-    private final JPanel     tableGrid = new JPanel(new FlowLayout(FlowLayout.LEFT, AppSpacing.SM, AppSpacing.SM));
+    private final JPanel     tableGrid = new JPanel(new com.app.view.common.WrapLayout(FlowLayout.LEFT, AppSpacing.SM, AppSpacing.SM));
 
     private Integer selectedBanId = null;
 
@@ -131,7 +131,10 @@ public class ReservationPanel extends JPanel {
         right.add(t, BorderLayout.NORTH);
 
         tableGrid.setOpaque(false);
-        right.add(new JScrollPane(tableGrid), BorderLayout.CENTER);
+        JScrollPane sp = new JScrollPane(tableGrid);
+        sp.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        sp.getVerticalScrollBar().setUnitIncrement(16);
+        right.add(sp, BorderLayout.CENTER);
         return right;
     }
 

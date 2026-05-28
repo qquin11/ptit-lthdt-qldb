@@ -246,13 +246,16 @@ public class OrderPanel extends JPanel {
     }
 
     private JScrollPane buildMenuGrid(List<MonAn> items) {
-        // FlowLayout để menu card auto wrap khi panel order narrow
-        JPanel grid = new JPanel(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT, AppSpacing.SM, AppSpacing.SM));
+        // WrapLayout để menu card auto wrap xuống dòng khi hết chỗ (FlowLayout thường trong scroll pane không wrap)
+        JPanel grid = new JPanel(new com.app.view.common.WrapLayout(java.awt.FlowLayout.LEFT, AppSpacing.SM, AppSpacing.SM));
         grid.setBorder(BorderFactory.createEmptyBorder(AppSpacing.SM, AppSpacing.SM, AppSpacing.SM, AppSpacing.SM));
         for (MonAn m : items) {
             grid.add(new MenuCard(m, this::onAddItem));
         }
-        return new JScrollPane(grid);
+        JScrollPane sp = new JScrollPane(grid);
+        sp.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        sp.getVerticalScrollBar().setUnitIncrement(16);
+        return sp;
     }
 
     private void onAddItem(MonAn m) {

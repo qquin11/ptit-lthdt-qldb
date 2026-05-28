@@ -34,8 +34,8 @@ public class TableMapPanel extends JPanel {
     private final JComboBox<String> filterStatus = new JComboBox<>(new String[]{
             "Tất cả", "Trống", "Đang dùng", "Đã đặt"});
     private final SearchField search = new SearchField("Tìm bàn (vd: Bàn 5)...");
-    // FlowLayout tự xuống dòng khi window narrow → cards giữ preferred size khỏi bị bóp
-    private final JPanel grid = new JPanel(new FlowLayout(FlowLayout.LEFT, AppSpacing.MD, AppSpacing.MD));
+    // WrapLayout: card giữ preferred size, hết chỗ tự xuống dòng (FlowLayout thường trong scroll pane không wrap)
+    private final JPanel grid = new JPanel(new com.app.view.common.WrapLayout(FlowLayout.LEFT, AppSpacing.MD, AppSpacing.MD));
     private final JLabel legend = new JLabel(" ");
 
     private List<BanAn> allTables = List.of();
@@ -66,7 +66,11 @@ public class TableMapPanel extends JPanel {
         add(header, BorderLayout.NORTH);
 
         grid.setOpaque(false);
-        add(new JScrollPane(grid), BorderLayout.CENTER);
+        JScrollPane scroll = new JScrollPane(grid);
+        scroll.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        scroll.getVerticalScrollBar().setUnitIncrement(16);
+        scroll.setBorder(BorderFactory.createEmptyBorder());
+        add(scroll, BorderLayout.CENTER);
 
         filterStatus.addActionListener(e -> render());
         search.onTextChanged(s -> render());

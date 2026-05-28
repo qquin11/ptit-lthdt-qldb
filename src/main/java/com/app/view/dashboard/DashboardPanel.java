@@ -49,7 +49,7 @@ public class DashboardPanel extends JPanel {
         add(header, BorderLayout.NORTH);
 
         // 3 KPI cards row — WrapLayout để khi window narrow tự xuống dòng khỏi bị bóp
-        JPanel cards = new JPanel(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT, AppSpacing.LG, 0));
+        JPanel cards = new JPanel(new com.app.view.common.WrapLayout(java.awt.FlowLayout.LEFT, AppSpacing.LG, 0));
         cards.setOpaque(false);
         cardRevenue.setAccent(AppColors.SUCCESS);
         cardTables.setAccent(AppColors.WARNING);
@@ -65,6 +65,7 @@ public class DashboardPanel extends JPanel {
         body.add(feed,  BorderLayout.SOUTH);
         // Wrap toàn bộ body với scrollpane để khi window thu nhỏ scroll dọc khỏi mất nội dung
         JScrollPane scroll = new JScrollPane(body);
+        scroll.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         scroll.setBorder(BorderFactory.createEmptyBorder());
         scroll.setOpaque(false);
         scroll.getViewport().setOpaque(false);
