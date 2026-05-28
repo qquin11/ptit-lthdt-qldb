@@ -31,10 +31,10 @@ public class StatusBar extends JPanel {
         setBorder(BorderFactory.createMatteBorder(1, 0, 0, 0,
                 javax.swing.UIManager.getColor("Component.borderColor")));
 
-        lblUser = newLabel("☻ " + Session.currentName() + " · " + Session.currentRole(),
+        lblUser = newLabel(Session.currentName() + " · " + Session.currentRole(),
                 SwingConstants.LEFT);
         lblClock = newLabel(LocalDateTime.now().format(CLOCK_FMT), SwingConstants.CENTER);
-        lblDb = newLabel("● Online", SwingConstants.RIGHT);
+        lblDb = newLabel("Online", SwingConstants.RIGHT);
         lblDb.setForeground(AppColors.SUCCESS);
 
         add(lblUser,  BorderLayout.WEST);
@@ -48,7 +48,7 @@ public class StatusBar extends JPanel {
     }
 
     public void refreshUser() {
-        lblUser.setText("☻ " + Session.currentName() + " · " + Session.currentRole());
+        lblUser.setText(Session.currentName() + " · " + Session.currentRole());
     }
 
     public void stop() {
