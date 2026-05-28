@@ -88,7 +88,7 @@ public class Sidebar extends JPanel {
     }
 
     private void handleClick(String id) {
-        if (!ID_SETTINGS.equals(id) && !ID_LOGOUT.equals(id)) {
+        if (!ID_LOGOUT.equals(id)) {
             setActive(id);
         }
         if (navHandler != null) navHandler.accept(id);

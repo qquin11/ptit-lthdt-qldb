@@ -49,7 +49,6 @@ public class MainController {
     private void handleNav(String id) {
         switch (id) {
             case Sidebar.ID_LOGOUT -> logout();
-            case Sidebar.ID_SETTINGS -> Toast.info(view, "Cài đặt: sẽ bổ sung sau");
             default -> view.showPanel(id);
         }
     }

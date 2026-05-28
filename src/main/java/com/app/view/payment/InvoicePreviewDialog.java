@@ -60,9 +60,9 @@ public class InvoicePreviewDialog extends JDialog {
 
     private String buildReceipt(HoaDon hd, List<ChiTietHoaDon> items) {
         StringBuilder sb = new StringBuilder();
-        sb.append(center("NHÀ HÀNG ABC")).append('\n');
-        sb.append(center("123 Trần Phú, Hà Nội")).append('\n');
-        sb.append(center("ĐT: 0901-234-567")).append('\n');
+        sb.append(center(com.app.config.AppSettings.restaurantName())).append('\n');
+        sb.append(center(com.app.config.AppSettings.restaurantAddress())).append('\n');
+        sb.append(center("ĐT: " + com.app.config.AppSettings.restaurantPhone())).append('\n');
         sb.append(line('=')).append('\n');
         sb.append("HĐ: #").append(hd.getId()).append('\n');
         sb.append("Ngày: ").append(LocalDateTime.now().format(

@@ -289,7 +289,7 @@ public class OrderPanel extends JPanel {
     private void recalc() {
         if (currentOrder == null) return;
         double subtotal = orderModel.subtotal();
-        double vat = subtotal * 0.10;
+        double vat = subtotal * com.app.config.AppSettings.vatRate();
         double discountPercent = 0;
         try { discountPercent = Double.parseDouble(fieldDiscount.getText().trim()); }
         catch (NumberFormatException ignored) {}

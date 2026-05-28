@@ -191,7 +191,7 @@ public class PaymentPanel extends JPanel {
 
     private void recalc() {
         double subtotal = detailModel.subtotal();
-        double vat = subtotal * 0.10;
+        double vat = subtotal * com.app.config.AppSettings.vatRate();
         double discountPercent = parseSafe(fieldDiscount.getText(), 0);
         double discount = subtotal * (discountPercent / 100.0);
         double total = subtotal + vat - discount;
@@ -230,7 +230,7 @@ public class PaymentPanel extends JPanel {
         double money = parseSafe(fieldMoney.getText(), 0);
 
         currentOrder.setTongTien(subtotal);
-        currentOrder.setVat(0.10);
+        currentOrder.setVat(com.app.config.AppSettings.vatRate());
         currentOrder.setGiamGia(discount);
 
         if (money < currentOrder.getThanhToanCuoi()) {
