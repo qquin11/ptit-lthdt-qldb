@@ -36,7 +36,7 @@ public class HelpDialog extends JDialog {
               Right-click   Menu (Order/Đặt/Thanh toán)
 
             -----------------------------------
-            Mẹo: theme có thể đổi qua nút ☀/🌙
+            Mẹo: theme Light/Dark đổi qua nút
             trên TopBar (góc trên bên phải).
             """;
 

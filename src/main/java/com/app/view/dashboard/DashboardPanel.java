@@ -12,17 +12,17 @@ import com.app.view.common.StatCard;
 import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.SwingConstants;
 import javax.swing.Timer;
 import java.awt.BorderLayout;
-import java.awt.GridLayout;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 /** Dashboard với 3 KPI cards + activity feed . */
 public class DashboardPanel extends JPanel {
 
-    private final StatCard cardRevenue = new StatCard("₫", "Doanh thu hôm nay");
+    private final StatCard cardRevenue = new StatCard("▣", "Doanh thu hôm nay");
     private final StatCard cardTables  = new StatCard("▦", "Bàn đang dùng");
     private final StatCard cardOrders  = new StatCard("▤", "Hóa đơn hôm nay");
     private final RevenueChart chart = new RevenueChart();
@@ -48,8 +48,8 @@ public class DashboardPanel extends JPanel {
         header.add(lblDateTime, BorderLayout.EAST);
         add(header, BorderLayout.NORTH);
 
-        // 3 KPI cards row
-        JPanel cards = new JPanel(new GridLayout(1, 3, AppSpacing.LG, 0));
+        // 3 KPI cards row — WrapLayout để khi window narrow tự xuống dòng khỏi bị bóp
+        JPanel cards = new JPanel(new com.app.view.common.WrapLayout(java.awt.FlowLayout.LEFT, AppSpacing.LG, 0));
         cards.setOpaque(false);
         cardRevenue.setAccent(AppColors.SUCCESS);
         cardTables.setAccent(AppColors.WARNING);
@@ -63,10 +63,17 @@ public class DashboardPanel extends JPanel {
         body.add(cards, BorderLayout.NORTH);
         body.add(chart, BorderLayout.CENTER);
         body.add(feed,  BorderLayout.SOUTH);
-        add(body, BorderLayout.CENTER);
+        // Wrap toàn bộ body với scrollpane để khi window thu nhỏ scroll dọc khỏi mất nội dung
+        JScrollPane scroll = new JScrollPane(body);
+        scroll.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        scroll.setBorder(BorderFactory.createEmptyBorder());
+        scroll.setOpaque(false);
+        scroll.getViewport().setOpaque(false);
+        scroll.getVerticalScrollBar().setUnitIncrement(16);
+        add(scroll, BorderLayout.CENTER);
 
         Timer clock = new Timer(1000, e ->
-                lblDateTime.setText("🕐 " + LocalDateTime.now().format(
+                lblDateTime.setText(LocalDateTime.now().format(
                         DateTimeFormatter.ofPattern("HH:mm:ss · dd/MM/yyyy"))));
         clock.start();
     }

@@ -77,8 +77,7 @@ public class TopBar extends JPanel {
         btnBell.setToolTipText("Thông báo");
         btnBell.addActionListener(e -> showNotifications());
 
-        btnUser = new GhostButton("☻  " + Session.currentName());
-        btnUser.setFont(com.app.config.AppFonts.icon == null ? btnUser.getFont() : com.app.config.AppFonts.icon);
+        btnUser = new GhostButton(Session.currentName());
         btnUser.setToolTipText("Tài khoản");
         btnUser.addActionListener(e -> showUserMenu());
 
@@ -94,7 +93,7 @@ public class TopBar extends JPanel {
     }
 
     public void refreshUser() {
-        btnUser.setText("☻  " + Session.currentName());
+        btnUser.setText(Session.currentName());
     }
 
     public void onSearch(Consumer<String> listener) {

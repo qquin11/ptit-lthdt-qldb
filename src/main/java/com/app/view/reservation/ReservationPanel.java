@@ -49,7 +49,7 @@ public class ReservationPanel extends JPanel {
     private final JSpinner   spinnerDateTime = createDateTimeSpinner();
     private final JLabel     lblSelectedTable = new JLabel("(chưa chọn)");
     private final JTextArea  fieldNote = new JTextArea(3, 20);
-    private final JPanel     tableGrid = new JPanel(new GridLayout(0, 5, AppSpacing.SM, AppSpacing.SM));
+    private final JPanel     tableGrid = new JPanel(new com.app.view.common.WrapLayout(FlowLayout.LEFT, AppSpacing.SM, AppSpacing.SM));
 
     private Integer selectedBanId = null;
 
@@ -62,7 +62,7 @@ public class ReservationPanel extends JPanel {
         JLabel title = new JLabel("Đặt bàn trước");
         title.setFont(AppFonts.h1 == null ? title.getFont() : AppFonts.h1);
         header.add(title, BorderLayout.WEST);
-        SecondaryButton btnList = new SecondaryButton("▤  Danh sách đặt bàn");
+        SecondaryButton btnList = new SecondaryButton("Danh sách đặt bàn");
         btnList.addActionListener(e -> {
             Frame owner = (Frame) javax.swing.SwingUtilities.getWindowAncestor(this);
             new BookingListDialog(owner).setVisible(true);
@@ -113,7 +113,7 @@ public class ReservationPanel extends JPanel {
         buttons.setOpaque(false);
         SecondaryButton btnClear = new SecondaryButton("Xóa form");
         btnClear.addActionListener(e -> clearForm());
-        PrimaryButton btnSubmit = new PrimaryButton("✓ Đặt bàn");
+        PrimaryButton btnSubmit = new PrimaryButton("Đặt bàn");
         btnSubmit.addActionListener(e -> submit());
         buttons.add(btnClear);
         buttons.add(btnSubmit);
@@ -131,7 +131,10 @@ public class ReservationPanel extends JPanel {
         right.add(t, BorderLayout.NORTH);
 
         tableGrid.setOpaque(false);
-        right.add(new JScrollPane(tableGrid), BorderLayout.CENTER);
+        JScrollPane sp = new JScrollPane(tableGrid);
+        sp.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        sp.getVerticalScrollBar().setUnitIncrement(16);
+        right.add(sp, BorderLayout.CENTER);
         return right;
     }
 

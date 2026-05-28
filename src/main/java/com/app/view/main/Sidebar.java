@@ -38,6 +38,7 @@ public class Sidebar extends JPanel {
     private final Map<String, SidebarItem> items = new LinkedHashMap<>();
     private boolean collapsed = false;
     private Consumer<String> navHandler;
+    private JLabel logoText;
 
     public Sidebar() {
         setLayout(new BorderLayout());
@@ -53,7 +54,7 @@ public class Sidebar extends JPanel {
         JLabel logoIcon = new JLabel("✦");
         logoIcon.setFont(AppFonts.iconLarge == null ? logoIcon.getFont() : AppFonts.iconLarge);
         logoIcon.setForeground(com.app.config.AppColors.LIGHT_ACCENT);
-        JLabel logoText = new JLabel(AppConfig.APP_NAME);
+        logoText = new JLabel(AppConfig.APP_NAME);
         logoText.setFont(AppFonts.h2 == null ? logoText.getFont() : AppFonts.h2);
         header.add(logoIcon);
         header.add(logoText);
@@ -87,7 +88,7 @@ public class Sidebar extends JPanel {
     }
 
     private void handleClick(String id) {
-        if (!ID_SETTINGS.equals(id) && !ID_LOGOUT.equals(id)) {
+        if (!ID_LOGOUT.equals(id)) {
             setActive(id);
         }
         if (navHandler != null) navHandler.accept(id);
@@ -108,6 +109,7 @@ public class Sidebar extends JPanel {
         setPreferredSize(new Dimension(
                 collapsed ? AppSpacing.W_SIDEBAR_COLLAPSED : AppSpacing.W_SIDEBAR_EXPANDED, 100));
         items.values().forEach(it -> it.setCollapsed(collapsed));
+        if (logoText != null) logoText.setVisible(!collapsed);
         revalidate();
         repaint();
     }

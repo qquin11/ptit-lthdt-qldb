@@ -1,6 +1,5 @@
 package com.app.service;
 
-import com.app.config.AppConfig;
 import com.app.dao.ChiTietHoaDonDAO;
 import com.app.dao.HoaDonDAO;
 import com.app.model.ChiTietHoaDon;
@@ -30,7 +29,7 @@ public class OrderService {
         h.setBanAnId(banId);
         h.setNhanVienId(nhanVienId);
         h.setNgayTao(DateFormatter.toSql(LocalDateTime.now()));
-        h.setVat(AppConfig.DEFAULT_VAT_RATE);
+        h.setVat(com.app.config.AppSettings.vatRate());
         h.setTongTien(0);
         h.setTrangThai(0);
         h.setPhuongThucTt(HoaDon.PT_TIEN_MAT);

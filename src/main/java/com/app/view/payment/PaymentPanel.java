@@ -133,9 +133,9 @@ public class PaymentPanel extends JPanel {
         // Buttons
         JPanel buttons = new JPanel(new GridLayout(1, 2, AppSpacing.SM, 0));
         buttons.setOpaque(false);
-        SecondaryButton btnPreview = new SecondaryButton("◉  Xem hóa đơn");
+        SecondaryButton btnPreview = new SecondaryButton("Xem hóa đơn");
         btnPreview.addActionListener(e -> showInvoicePreview());
-        PrimaryButton btnConfirm   = new PrimaryButton("✓  XÁC NHẬN THANH TOÁN");
+        PrimaryButton btnConfirm   = new PrimaryButton("XÁC NHẬN THANH TOÁN");
         btnConfirm.addActionListener(e -> confirmPayment());
         buttons.add(btnPreview);
         buttons.add(btnConfirm);
@@ -191,7 +191,7 @@ public class PaymentPanel extends JPanel {
 
     private void recalc() {
         double subtotal = detailModel.subtotal();
-        double vat = subtotal * 0.10;
+        double vat = subtotal * com.app.config.AppSettings.vatRate();
         double discountPercent = parseSafe(fieldDiscount.getText(), 0);
         double discount = subtotal * (discountPercent / 100.0);
         double total = subtotal + vat - discount;
@@ -230,7 +230,7 @@ public class PaymentPanel extends JPanel {
         double money = parseSafe(fieldMoney.getText(), 0);
 
         currentOrder.setTongTien(subtotal);
-        currentOrder.setVat(0.10);
+        currentOrder.setVat(com.app.config.AppSettings.vatRate());
         currentOrder.setGiamGia(discount);
 
         if (money < currentOrder.getThanhToanCuoi()) {

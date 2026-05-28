@@ -71,7 +71,7 @@ public class MenuPanel extends JPanel {
         actions.setOpaque(false);
         PrimaryButton btnAdd = new PrimaryButton("+ Thêm món");
         btnAdd.addActionListener(e -> openForm(null));
-        GhostButton btnReload = new GhostButton("↻ Reload");
+        GhostButton btnReload = new GhostButton("Tải lại");
         btnReload.addActionListener(e -> refresh());
         actions.add(btnReload);
         actions.add(btnAdd);

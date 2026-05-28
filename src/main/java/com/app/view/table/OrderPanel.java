@@ -13,10 +13,11 @@ import com.app.util.SwingWorkerHelper;
 import com.app.view.common.GhostButton;
 import com.app.view.common.PrimaryButton;
 import com.app.view.common.SearchField;
-import com.app.view.common.SecondaryButton;
 import com.app.view.common.Toast;
 
+import javax.swing.AbstractCellEditor;
 import javax.swing.BorderFactory;
+import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -26,8 +27,11 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.table.AbstractTableModel;
+import javax.swing.table.TableCellEditor;
+import javax.swing.table.TableCellRenderer;
 import java.awt.BorderLayout;
-import java.awt.FlowLayout;
+import java.awt.Color;
+import java.awt.Component;
 import java.awt.GridLayout;
 import java.util.ArrayList;
 import java.util.List;
@@ -91,7 +95,7 @@ public class OrderPanel extends JPanel {
         lblHeader.setFont(AppFonts.h1 == null ? lblHeader.getFont() : AppFonts.h1);
         header.add(lblHeader, BorderLayout.WEST);
 
-        GhostButton back = new GhostButton("← Quay lại sơ đồ bàn");
+        GhostButton back = new GhostButton("Quay lại sơ đồ bàn");
         back.addActionListener(e -> { if (onBack != null) onBack.run(); });
         header.add(back, BorderLayout.EAST);
         return header;
@@ -122,7 +126,21 @@ public class OrderPanel extends JPanel {
         t.setFont(AppFonts.h2 == null ? t.getFont() : AppFonts.h2);
         right.add(t, BorderLayout.NORTH);
 
-        orderTable.setRowHeight(32);
+        orderTable.setRowHeight(36);
+        orderTable.setSelectionBackground(new Color(0xD1FAE5));
+        orderTable.setSelectionForeground(java.awt.Color.BLACK);
+        orderTable.setRowSelectionAllowed(true);
+        orderTable.setShowGrid(false);
+        // SL column: inline +/- buttons cho phép click trực tiếp khỏi chọn row trước
+        orderTable.getColumnModel().getColumn(1).setCellRenderer(new QtyCellRenderer());
+        orderTable.getColumnModel().getColumn(1).setCellEditor(new QtyCellEditor());
+        orderTable.getColumnModel().getColumn(1).setPreferredWidth(130);
+        orderTable.getColumnModel().getColumn(1).setMinWidth(110);
+        // Remove column: dấu × bấm là xóa
+        orderTable.getColumnModel().getColumn(4).setCellRenderer(new RemoveCellRenderer());
+        orderTable.getColumnModel().getColumn(4).setCellEditor(new RemoveCellEditor());
+        orderTable.getColumnModel().getColumn(4).setPreferredWidth(50);
+        orderTable.getColumnModel().getColumn(4).setMaxWidth(60);
         right.add(new JScrollPane(orderTable), BorderLayout.CENTER);
 
         // Footer: summary + actions
@@ -142,25 +160,9 @@ public class OrderPanel extends JPanel {
 
         footer.add(summary, BorderLayout.CENTER);
 
-        JPanel qtyRow = new JPanel(new FlowLayout(FlowLayout.LEFT, AppSpacing.XS, AppSpacing.XS));
-        qtyRow.setOpaque(false);
-        GhostButton btnMinus = new GhostButton("−  SL");
-        btnMinus.addActionListener(e -> changeQtySelected(-1));
-        GhostButton btnPlus  = new GhostButton("+  SL");
-        btnPlus.addActionListener(e -> changeQtySelected(+1));
-        SecondaryButton btnRemove  = new SecondaryButton("✕  Xóa món chọn");
-        btnRemove.addActionListener(e -> removeSelected(orderTable.getSelectedRow()));
-        qtyRow.add(btnMinus);
-        qtyRow.add(btnPlus);
-        qtyRow.add(btnRemove);
-
-        JPanel buttons = new JPanel(new BorderLayout(0, AppSpacing.XS));
-        buttons.setOpaque(false);
-        buttons.add(qtyRow, BorderLayout.NORTH);
         PrimaryButton btnPay = new PrimaryButton("THANH TOÁN  (F9)");
         btnPay.addActionListener(e -> proceedPayment());
-        buttons.add(btnPay, BorderLayout.CENTER);
-        footer.add(buttons, BorderLayout.SOUTH);
+        footer.add(btnPay, BorderLayout.SOUTH);
 
         right.add(footer, BorderLayout.SOUTH);
 
@@ -233,9 +235,8 @@ public class OrderPanel extends JPanel {
         return items.stream().filter(m -> m.getTenMon().toLowerCase().contains(q)).toList();
     }
 
-    private void changeQtySelected(int delta) {
-        int row = orderTable.getSelectedRow();
-        if (currentOrder == null || row < 0) return;
+    private void changeQtyRow(int row, int delta) {
+        if (currentOrder == null || row < 0 || row >= orderModel.getRowCount()) return;
         var item = orderModel.getRow(row);
         int newQty = item.getSoLuong() + delta;
         SwingWorkerHelper.run(
@@ -245,12 +246,16 @@ public class OrderPanel extends JPanel {
     }
 
     private JScrollPane buildMenuGrid(List<MonAn> items) {
-        JPanel grid = new JPanel(new GridLayout(0, 3, AppSpacing.SM, AppSpacing.SM));
+        // WrapLayout để menu card auto wrap xuống dòng khi hết chỗ (FlowLayout thường trong scroll pane không wrap)
+        JPanel grid = new JPanel(new com.app.view.common.WrapLayout(java.awt.FlowLayout.LEFT, AppSpacing.SM, AppSpacing.SM));
         grid.setBorder(BorderFactory.createEmptyBorder(AppSpacing.SM, AppSpacing.SM, AppSpacing.SM, AppSpacing.SM));
         for (MonAn m : items) {
             grid.add(new MenuCard(m, this::onAddItem));
         }
-        return new JScrollPane(grid);
+        JScrollPane sp = new JScrollPane(grid);
+        sp.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        sp.getVerticalScrollBar().setUnitIncrement(16);
+        return sp;
     }
 
     private void onAddItem(MonAn m) {
@@ -272,8 +277,8 @@ public class OrderPanel extends JPanel {
                 err -> {});
     }
 
-    private void removeSelected(int row) {
-        if (currentOrder == null || row < 0) return;
+    private void removeRow(int row) {
+        if (currentOrder == null || row < 0 || row >= orderModel.getRowCount()) return;
         ChiTietHoaDon item = orderModel.getRow(row);
         SwingWorkerHelper.run(
                 () -> { orderService.removeItem(currentOrder.getId(), item.getMonAnId()); return null; },
@@ -284,7 +289,7 @@ public class OrderPanel extends JPanel {
     private void recalc() {
         if (currentOrder == null) return;
         double subtotal = orderModel.subtotal();
-        double vat = subtotal * 0.10;
+        double vat = subtotal * com.app.config.AppSettings.vatRate();
         double discountPercent = 0;
         try { discountPercent = Double.parseDouble(fieldDiscount.getText().trim()); }
         catch (NumberFormatException ignored) {}
@@ -308,7 +313,7 @@ public class OrderPanel extends JPanel {
     // TABLE MODEL
 
     private static class OrderTableModel extends AbstractTableModel {
-        private final String[] cols = {"Món", "SL", "Đơn giá", "Thành tiền"};
+        private final String[] cols = {"Món", "Số lượng", "Đơn giá", "Thành tiền", ""};
         private List<ChiTietHoaDon> data = new ArrayList<>();
 
         public void setData(List<ChiTietHoaDon> d) {
@@ -326,6 +331,9 @@ public class OrderPanel extends JPanel {
         @Override public int getColumnCount() { return cols.length; }
         @Override public String getColumnName(int c) { return cols[c]; }
 
+        // Cell 1 (qty) và cell 4 (remove) phải editable thì cell editor mới nhận click
+        @Override public boolean isCellEditable(int r, int c) { return c == 1 || c == 4; }
+
         @Override
         public Object getValueAt(int r, int c) {
             ChiTietHoaDon item = data.get(r);
@@ -336,6 +344,93 @@ public class OrderPanel extends JPanel {
                 case 3 -> CurrencyFormatter.format(item.getThanhTien());
                 default -> "";
             };
+        }
+    }
+
+    // Renderer cho cột Số lượng: hiển thị "−  N  +" inline
+    private class QtyCellRenderer extends JPanel implements TableCellRenderer {
+        private final JLabel lblQty = new JLabel("0", SwingConstants.CENTER);
+        private final JLabel lblMinus = new JLabel("−", SwingConstants.CENTER);
+        private final JLabel lblPlus  = new JLabel("+", SwingConstants.CENTER);
+        QtyCellRenderer() {
+            super(new GridLayout(1, 3, 4, 0));
+            setBorder(BorderFactory.createEmptyBorder(2, 6, 2, 6));
+            for (var l : new JLabel[]{lblMinus, lblPlus}) {
+                l.setOpaque(true);
+                l.setBackground(new Color(0xE5E7EB));
+                l.setBorder(BorderFactory.createEmptyBorder(2, 4, 2, 4));
+            }
+            add(lblMinus); add(lblQty); add(lblPlus);
+        }
+        @Override
+        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+            lblQty.setText(value == null ? "0" : value.toString());
+            setBackground(isSelected ? table.getSelectionBackground() : table.getBackground());
+            return this;
+        }
+    }
+
+    // Editor cho cột Số lượng: clickable −/+ trực tiếp
+    private class QtyCellEditor extends AbstractCellEditor implements TableCellEditor {
+        private final JPanel panel = new JPanel(new GridLayout(1, 3, 4, 0));
+        private final JLabel lblQty = new JLabel("0", SwingConstants.CENTER);
+        private final JButton btnMinus = new JButton("−");
+        private final JButton btnPlus  = new JButton("+");
+        private int editingRow = -1;
+        QtyCellEditor() {
+            panel.setBorder(BorderFactory.createEmptyBorder(2, 6, 2, 6));
+            for (JButton b : new JButton[]{btnMinus, btnPlus}) {
+                b.setFocusPainted(false);
+                b.setMargin(new java.awt.Insets(0, 4, 0, 4));
+                b.putClientProperty("JButton.buttonType", "borderless");
+            }
+            btnMinus.addActionListener(e -> { changeQtyRow(editingRow, -1); fireEditingStopped(); });
+            btnPlus.addActionListener(e ->  { changeQtyRow(editingRow, +1); fireEditingStopped(); });
+            panel.add(btnMinus); panel.add(lblQty); panel.add(btnPlus);
+        }
+        @Override public Object getCellEditorValue() { return lblQty.getText(); }
+        @Override
+        public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
+            editingRow = row;
+            lblQty.setText(value == null ? "0" : value.toString());
+            panel.setBackground(table.getSelectionBackground());
+            return panel;
+        }
+    }
+
+    // Renderer cho cột xóa: dấu ×
+    private static class RemoveCellRenderer extends JLabel implements TableCellRenderer {
+        RemoveCellRenderer() {
+            setHorizontalAlignment(SwingConstants.CENTER);
+            setText("×");
+            setForeground(new Color(0xEF4444));
+            setFont(getFont().deriveFont(java.awt.Font.BOLD, 18f));
+            setOpaque(true);
+        }
+        @Override
+        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+            setBackground(isSelected ? table.getSelectionBackground() : table.getBackground());
+            return this;
+        }
+    }
+
+    // Editor cho cột xóa: click là xóa luôn
+    private class RemoveCellEditor extends AbstractCellEditor implements TableCellEditor {
+        private final JButton btn = new JButton("×");
+        private int editingRow = -1;
+        RemoveCellEditor() {
+            btn.setBorderPainted(false);
+            btn.setFocusPainted(false);
+            btn.setContentAreaFilled(false);
+            btn.setForeground(new Color(0xEF4444));
+            btn.setFont(btn.getFont().deriveFont(java.awt.Font.BOLD, 18f));
+            btn.addActionListener(e -> { removeRow(editingRow); fireEditingStopped(); });
+        }
+        @Override public Object getCellEditorValue() { return null; }
+        @Override
+        public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
+            editingRow = row;
+            return btn;
         }
     }
 }

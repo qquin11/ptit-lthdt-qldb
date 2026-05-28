@@ -6,6 +6,7 @@ import com.app.view.employee.EmployeePanel;
 import com.app.view.menu.MenuPanel;
 import com.app.view.payment.PaymentPanel;
 import com.app.view.reservation.ReservationPanel;
+import com.app.view.settings.SettingsPanel;
 import com.app.view.table.OrderPanel;
 import com.app.view.table.TableMapPanel;
 
@@ -40,6 +41,7 @@ public class MainFrame extends JFrame {
     private final EmployeePanel    employeePanel;
     private final ReservationPanel reservationPanel;
     private final PaymentPanel     paymentPanel;
+    private final SettingsPanel    settingsPanel;
 
     public MainFrame() {
         setTitle(AppConfig.APP_NAME + " — " + AppConfig.APP_VERSION);
@@ -66,6 +68,7 @@ public class MainFrame extends JFrame {
         employeePanel    = new EmployeePanel();
         reservationPanel = new ReservationPanel();
         paymentPanel     = new PaymentPanel(this::backToTables);
+        settingsPanel    = new SettingsPanel();
 
         content.add(dashboardPanel,   Sidebar.ID_DASHBOARD);
         content.add(tableMapPanel,    Sidebar.ID_TABLES);
@@ -74,6 +77,7 @@ public class MainFrame extends JFrame {
         content.add(employeePanel,    Sidebar.ID_EMPLOYEES);
         content.add(reservationPanel, Sidebar.ID_RESERVATION);
         content.add(paymentPanel,     Sidebar.ID_PAYMENT);
+        content.add(settingsPanel,    Sidebar.ID_SETTINGS);
 
         add(topBar,    BorderLayout.NORTH);
         add(sidebar,   BorderLayout.WEST);
@@ -133,6 +137,7 @@ public class MainFrame extends JFrame {
         if (Sidebar.ID_MENU.equals(id))       menuPanel.refresh();
         if (Sidebar.ID_EMPLOYEES.equals(id))  employeePanel.refresh();
         if (Sidebar.ID_RESERVATION.equals(id)) reservationPanel.refresh();
+        if (Sidebar.ID_SETTINGS.equals(id))    settingsPanel.reloadFields();
     }
 
     private void openOrderForTable(int banId) {
