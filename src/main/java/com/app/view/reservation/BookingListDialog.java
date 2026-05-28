@@ -51,9 +51,9 @@ public class BookingListDialog extends JDialog {
         add(new JScrollPane(table), BorderLayout.CENTER);
 
         JPanel buttons = new JPanel(new FlowLayout(FlowLayout.RIGHT, AppSpacing.SM, AppSpacing.SM));
-        GhostButton btnRefresh = new GhostButton("↻ Reload");
+        GhostButton btnRefresh = new GhostButton("Tải lại");
         btnRefresh.addActionListener(e -> refresh());
-        SecondaryButton btnCheckin = new SecondaryButton("✓ Đã đến");
+        SecondaryButton btnCheckin = new SecondaryButton("Đã đến");
         btnCheckin.addActionListener(e -> checkin());
         SecondaryButton btnCancel = new SecondaryButton("Hủy đặt");
         btnCancel.addActionListener(e -> cancel());

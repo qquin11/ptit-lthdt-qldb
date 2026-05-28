@@ -62,7 +62,7 @@ public class ReservationPanel extends JPanel {
         JLabel title = new JLabel("Đặt bàn trước");
         title.setFont(AppFonts.h1 == null ? title.getFont() : AppFonts.h1);
         header.add(title, BorderLayout.WEST);
-        SecondaryButton btnList = new SecondaryButton("▤  Danh sách đặt bàn");
+        SecondaryButton btnList = new SecondaryButton("Danh sách đặt bàn");
         btnList.addActionListener(e -> {
             Frame owner = (Frame) javax.swing.SwingUtilities.getWindowAncestor(this);
             new BookingListDialog(owner).setVisible(true);
@@ -113,7 +113,7 @@ public class ReservationPanel extends JPanel {
         buttons.setOpaque(false);
         SecondaryButton btnClear = new SecondaryButton("Xóa form");
         btnClear.addActionListener(e -> clearForm());
-        PrimaryButton btnSubmit = new PrimaryButton("✓ Đặt bàn");
+        PrimaryButton btnSubmit = new PrimaryButton("Đặt bàn");
         btnSubmit.addActionListener(e -> submit());
         buttons.add(btnClear);
         buttons.add(btnSubmit);

@@ -91,7 +91,7 @@ public class OrderPanel extends JPanel {
         lblHeader.setFont(AppFonts.h1 == null ? lblHeader.getFont() : AppFonts.h1);
         header.add(lblHeader, BorderLayout.WEST);
 
-        GhostButton back = new GhostButton("← Quay lại sơ đồ bàn");
+        GhostButton back = new GhostButton("Quay lại sơ đồ bàn");
         back.addActionListener(e -> { if (onBack != null) onBack.run(); });
         header.add(back, BorderLayout.EAST);
         return header;
@@ -148,7 +148,7 @@ public class OrderPanel extends JPanel {
         btnMinus.addActionListener(e -> changeQtySelected(-1));
         GhostButton btnPlus  = new GhostButton("+  SL");
         btnPlus.addActionListener(e -> changeQtySelected(+1));
-        SecondaryButton btnRemove  = new SecondaryButton("✕  Xóa món chọn");
+        SecondaryButton btnRemove  = new SecondaryButton("Xóa món chọn");
         btnRemove.addActionListener(e -> removeSelected(orderTable.getSelectedRow()));
         qtyRow.add(btnMinus);
         qtyRow.add(btnPlus);

@@ -60,7 +60,7 @@ public class EmployeePanel extends JPanel {
         actions.setOpaque(false);
         PrimaryButton btnAdd = new PrimaryButton("+ Thêm nhân viên");
         btnAdd.addActionListener(e -> openForm(null));
-        GhostButton btnReload = new GhostButton("↻ Reload");
+        GhostButton btnReload = new GhostButton("Tải lại");
         btnReload.addActionListener(e -> refresh());
         actions.add(btnReload);
         actions.add(btnAdd);
